@@ -1,0 +1,88 @@
+1. history ketika edit diberikan highlight warna merah
+2. diberikan tombol konfirmasi ketika melakukan submit
+3. status pada shipment list tidak ada ordering
+4. export excel judul terpotong dan ada kolom yg center bottom
+
+Penambahan Fitur Sistem Mismass Januari 2024
+
+    1. Fitur diskon
+Menambahkan fitur diskon di individual dan corporate pada tiap service pada additional service di invoice.
+Yg mana akan otomatis terhitung pada tiap2 sub total pada service (jika ada diskon)
+Nilai Diskon adalah Rupiah bukan persentase
+    • Penambahan di Create Invoice (opsi additional service & kolom total diskon)
+    • Penambahan di Edit Invoice (opsi additional service & kolom total diskon)
+    • Penambahan di Backup Data
+    • Penambahan di detil History
+    • Penambahan di Print Invoice
+    • Penambahan kolom diskon pada database
+    • Tampil di table Tracking dan Status
+
+	Rp.300.000
+
+###############################################################
+
+1. tinggal tambah kolom db discount OKE
+2. tambah required di validate OKE
+3. tambah discount di controller buat invoice OKE
+4. export individ OKE
+5. export corpora OKE
+
+###############################################################
+
+    2. Penyesuaian Ukuran kertas print untuk resi menjadi A6
+Tiap service akan menempati masing-masing 1 lembar A6 
+
+Rp.50.000
+
+    3. Update Sistem Nomor Resi
+Jika Pengirim adalah vendor, maka akan tampil opsi tambahan berupa centang "belum ada resi".
+Jika tercentang maka no resi akan digenerate secara otomatis berisi alphanum dengan 8 digit.
+Jika tidak maka petugas akan mengisi no resi secara manual seperti biasa.
+    • Penambahan di Create Resi
+    • Penambahan di Edit Resi
+    • Penyesuaian pada WA blast
+    • Penyesuaian kolom tabel status pada shipment list
+    • Penyesuaian no.resi / id di Export Data
+
+	Rp.400.000
+
+    4. CBM
+Penambahan tarif cbm pada tiap service, memiliki nilai minimum cbm Rp.7000.000 (jika jumlah cbm 0.5)
+jika lebih, misal jumlah cbm adalah 0.51 maka akan dibulatkan menjadi 0.6 lalu dikali dengan tarif per cbm.
+    • Penambahan di Create service #TIDAK DIPAKE
+    • Penambahan di Edit service #TIDAK DIPAKE
+    • Penambahan di detil History
+    • Penambahan di export data service #TIDAK DIPAKE
+    • Penambahan di export data All
+    • Penambahan kolom minimum cbm, jumlah cbm, tarif normal cbm di database (minimum cbm #TIDAK DIPAKE)
+    • Penambahan di Create Invoice
+    • Penambahan di Edit Invoice
+    • Penambahan di Print Invoice
+    • Penyesuaian kolom di table Invoice/Status
+	
+	Tarif Rp.500.000
+
+    5. History per Role
+Menampilkan halaman history pada semua role user. Akan tetapi dibedakan per role. 
+Kecuali superadmin. 
+misal user A login dan memiliki role sbg Operasional, maka jejak historynya hanya bisa dilihat oleh user dg role superadmin / sesama operasional.
+
+	Tarif Rp.300.000
+
+
+    6. Edit Resi Individual
+Penambahan fitur edit resi untuk tipe Individual seperti pada corporate. Dengan sistem resi yang terbaru.
+
+	Tarif Rp.300.000
+
+
+    7. Applay By User CS/Marketing
+Menambahkan tombol Apply untuk CS/Marketing
+Tombol ini digunakan untuk menerapkan data customer berdasarkan user CS/Marketing
+Data yang sudah di applay tidak bisa di ubah lagi kecuali superadmin, jadi CS/Marketing pengajuan ke superadmin dulu jika ada perubahan data nama reference
+
+Tarif Rp. 150.000
+
+    8. Export Data by Nama Reference (CS/Marketing)
+Fitur ini bisa digunakan sementara untuk perhitungan komisi CS/Marketing sembari menunggu system update SALES REPORT selesai, karena system SALES REPORT ini membutuhkan waktu yang cukup lama untuk penerapan pada sistem
+	Tarif Rp. 150.000
