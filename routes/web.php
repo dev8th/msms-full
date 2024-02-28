@@ -51,6 +51,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::controller(DiskonController::class)->group(function(){
         Route::post('/diskonlist', 'index')->name('diskon.index');
+        Route::get('/diskonlist/table/{custTypeId}', 'table')->name('diskon.table');
     });
 
     Route::controller(ShipmentController::class)->group(function () {

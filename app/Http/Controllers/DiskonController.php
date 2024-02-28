@@ -12,7 +12,8 @@ class DiskonController extends Controller
     public function index()
     {
         $this->roleAccess();
-        return view('pages.diskon');
+        $data['cust'] = DB::table("cust_list")->orderBy("first_name","asc")->get();
+        return view('pages.diskon',$data);
     }
 
     public function table(string $custTypeId, Request $request)
@@ -22,58 +23,98 @@ class DiskonController extends Controller
         $data = [];
         $no = $request->input('start');
         $search = $request->input('search')['value'];
+        $filterTanggalAwal = $request->input('filterTanggalAwal');
+        $filterTanggalAkhir = $request->input('filterTanggalAkhir');
+        $filterCustomerId = $request->input('customerId');
+        $filterOrderId = $request->input('mismassOrderId');
+        $filter = [
+            $filterTanggalAwal,
+            $filterTanggalAkhir,
+            $filterCustomerId,
+            $custTypeId,
+            $filterOrderId
+        ];
         $diskonModel = new Diskon();
-        $lists = $diskonModel->getDT($request, $search, $custTypeId);
+        $lists = $diskonModel->getDT($request, $search, $filter);
 
-        if ($custTypeId == "IND") {
+        if ($filterOrderId=="") {
 
             foreach ($lists as $list) {
-                $wholeBtn = "<div class='btn-group dropleft'><button type='button' class='btn btn-secondary nobtn' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-ellipsis-v'></i></button><div class='dropdown-menu' x-placement='right-start' style='position: absolute; transform: translate3d(111px, 0px, 0px); top: 0px; left: 0px; will-change: transform;'></div></div>";
+
+                $getData = DB::table('data_list')->select('id','sub_total','weight','item','length','height','width','cons_first_name','cons_middle_name','cons_last_name','cons_phone','cons_address','cons_sub_district','cons_district','cons_city','cons_prov','cons_postal_code','forwarder_id','forwarder_name','shipping_number','shipping_number_stats')->where('mismass_invoice_id',$list->mismass_invoice_id)->get();
+                $countRow = count($getData);
+                $detailControl = $custTypeId=="COR" ? "<div class='detail-control hidden-child' id='" . $list->mismass_order_id . "' data-createdAt='".$this->dateFormatIndo($list->shipping_created_at,1)."'></div>":"<input type='checkbox' style='margin-left:4px' name='checkResi' data-resi='".$this->resiOnlyId($list->shipping_number, $list->forwarder_id)."'>";
+                $dokuInvoiceId = $list->doku_invoice_id!="" ? $list->doku_invoice_id : "-";
+                $forwarder = $list->forwarder_id == "MISMASS" ? $list->forwarder_id." - ".$list->forwarder_name : ($list->forwarder_id=="PICK-UP" ? "<div style='color:red'>PICK-UP SENDIRI</div>" : $list->forwarder_name);
+                $shippingNumber = $list->shipping_number_stats==1?"<div style='color:red'>".$list->shipping_number."</div>":$list->shipping_number;
+                $fullname = $custTypeId=="COR" ? $list->sender_first_name . " " . $list->sender_middle_name . " " . $list->sender_last_name : $list->cons_first_name . " " . $list->cons_middle_name . " " . $list->cons_last_name;
+                $phone = $custTypeId=="COR" ? $list->sender_phone : $list->cons_phone;
+                $address = $custTypeId=="COR" ? $list->sender_address . ", " . $list->sender_sub_district . ", " . $list->sender_district . ", " . $list->sender_city . ", " . $list->sender_prov . ", " . $list->sender_postal_code : $list->cons_address . ", " . $list->cons_sub_district . ", " . $list->cons_district . ", " . $list->cons_city . ", " . $list->cons_prov . ", " . $list->cons_postal_code;
+                $detilPrice = $list->doku_link!=""?"<div><a href='" . $list->doku_link . "' target='_blank'>" . $list->doku_link . "</a></div>":"<div style='color:red'>".$list->bank_name." - ".$list->bank_account_name."</div><div style='color:blue'>".$list->bank_account_id."</div>";
+                $getRank = DB::table('users')->where("username",$list->shipping_updated_by)->value("rank");
+                $jabatan = $getRank != null ? "<div class='bg-mismass' style='padding:1px 5px'>".$getRank."</div>" : "";
+
+                $resiBtn = Auth::user()->shiplist_printout_resi?($custTypeId=="IND" ? "<a class='dropdown-item' href='" . url('/printout/resi/' . $this->resiNoGaring($this->resiOnlyId($list->shipping_number, $list->forwarder_id)).'=') . "' target='_blank'>Print Resi</a>" : ""):"";
+                $resiBtnAll = Auth::user()->shiplist_printout_resi?"<a class='dropdown-item printResiAll' href='#' data-mismassInvoiceId='".$list->mismass_invoice_id."'>Print Resi All</a>":"";
+                $invoiceBtn = Auth::user()->shiplist_printout_invoice?"<a class='dropdown-item' href='" . url('/printout/invoice/' . $this->invOnlyId($list->mismass_invoice_id)) . "' target='_blank'>Print Invoice</a>":"";
+                $wholeBtn = "<div class='btn-group dropleft'><button type='button' class='btn btn-secondary nobtn' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-ellipsis-v'></i></button><div class='dropdown-menu' x-placement='right-start' style='position: absolute; transform: translate3d(111px, 0px, 0px); top: 0px; left: 0px; will-change: transform;'>".$resiBtn.$resiBtnAll.$invoiceBtn."</div></div>";
 
                 $no++;
                 $row = [];
-                $row[] = $no;
-                $row[] = "<div style='font-weight:700'>" . $list->updated_by . "</div><div>Edited At : </div><div>" . $this->dateFormatIndo($list->updated_at,2) . "</div>";
-                $row[] = "<div style='font-weight:700'>" . $list->first_name . " " . $list->middle_name . " " . $list->last_name . "</div><div>ID" . strval($list->id) . "</div><div>Created At : </div><div>".$this->dateFormatIndo($list->created_at,0)."</div>";
-                $row[] = "<div>" . $list->phone . "</div><div>" . $list->email . "</div><div>" . $list->address . ", " . $list->sub_district . ", " . $list->district . ", " . $list->city . ", " . $list->prov . ", " . $list->postal_code . "</div>";
-                $row[] = "<div>".$this->hitungInvoiceCust($list->id)."</div>";
-                $row[] = "<div>".round($this->hitungBeratCust($list->id,0),2)." Kg</div><div>".$this->hitungItemCust($list->id,0)." Item</div><div>".round($this->hitungCbmCust($list->id,0),2)." CBM</div>";
-
+                $row[] = "<div class='orderNum'>".$no."</div>".$detailControl;
+                $row[] = "<div class='font-weight-bold'>" . $list->mismass_invoice_id . "</div><div>" . $this->dateFormatIndo($list->mismass_invoice_date,1) . "</div>";
+                $row[] = "<div class='font-weight-bold'>" . $dokuInvoiceId . "</div>";
+                $row[] = "<div class='font-weight-bold'>" . $forwarder . "</div><div class='font-weight-bold'>" . $shippingNumber . "</div><div>" . $this->dateFormatIndo($list->shipping_updated_at,2) . "</div>";
+                $row[] = "<div class='font-weight-bold'>" . $list->shipping_updated_by . "</div>".$jabatan."<div>" . $this->dateFormatIndo($list->shipping_updated_at,2) . "</div>";
+                $row[] = $fullname;
+                $row[] = "<div>" . $phone . "</div><div>" . $address . "</div>";
+                $row[] = "<div>" . round($list->totalWeight,2) . " KG</div><div>" . $list->totalItem . " Item</div><div>".round($list->totalCbm,2)." CBM</div>";
+                $detilDisc = "<div>Total : ".$this->rupiah($list->totalDisc+$list->totalPrice)."</div><div>Diskon : ".$this->rupiah($list->totalDisc)."</div>";
+                $row[] = $detilDisc."<div class='font-weight-bold'>Total Biaya : " . $this->rupiah($list->totalPrice) . "</div>".$detilPrice;
+                $row[] = $wholeBtn;
                 $data[] = $row;
+
             }
         } else {
 
             foreach ($lists as $list) {
-                $getRank = DB::table('users')->where("username",$list->updated_by)->value("rank");
-                $jabatan = $getRank != null ? "<div class='bg-mismass' style='padding:1px 5px'>".$getRank."</div>" : "";
-                $label = $list->cust_type_id == "IND" ? "Customer" : "Client";
-                $editBtn = Auth::user()->custlist_edit?"<a class='dropdown-item' id='editBtn' data-reference='".$list->reference."' data-id='" . $list->id . "' data-firstName='" . $list->first_name . "' data-middleName='" . $list->middle_name . "' data-lastName='" . $list->last_name . "' data-phone='" . $list->phone . "' data-email='" . $list->email . "' data-address='" . $list->address . "' data-subDistrict='" . $list->sub_district . "' data-district='" . $list->district . "' data-city='" . $list->city . "' data-prov='" . $list->prov . "' data-postalCode='" . $list->postal_code . "' data-custTypeId='" . $list->cust_type_id . "' href='#'>Edit Data</a>":"";
-                $hapusBtn = Auth::user()->custlist_hapus?"<a class='dropdown-item' id='hapusBtn' onclick=\"konfirm_hapus('" . $list->id . "','" . $list->first_name . "','" . $label . "','" . url('/custlist/hapus/') . "','custlist')\" href='#'><div style='color:red'>Hapus Data</div></a>":"";
-                $wholeBtn = "<div class='btn-group dropleft'><button type='button' class='btn btn-secondary nobtn' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-ellipsis-v'></i></button><div class='dropdown-menu' x-placement='right-start' style='position: absolute; transform: translate3d(111px, 0px, 0px); top: 0px; left: 0px; will-change: transform;'>".$editBtn.$hapusBtn."</div></div>";
+
+                // $invoiceStatus = $list->invoice_status=="PAID" ? "<div style='color:green'>PAID</div>" : "<div style='color:red'>UNPAID</div>";
+                // $detailControl = $custTypeId=="COR" ? "<div class='detail-control hidden-child' id='" . $list->mismass_order_id . "' data-createdAt='".$this->dateFormatIndo($list->shipping_created_at,1)."'></div>":"<input type='checkbox' style='margin-left:4px' name='checkResi' data-resi='".$this->resiOnlyId($list->shipping_number, $list->forwarder_id)."'>";
+                // $addressFull = $list->sender_address.", ".$list->sender_sub_district.", ".$list->sender_district.", ".$list->sender_city.", ".$list->sender_prov.", ".$list->sender_postal_code;
+                // $getRank = DB::table('users')->where("username",$list->updated_by)->value("rank");
+                // $jabatan = $getRank != null ? "<div class='bg-mismass' style='padding:1px 5px'>".$getRank."</div>" : "";
+                // $resiBtnAll = Auth::user()->shiplist_printout_resi?($custTypeId=="COR"?($list->shipping_number!=""?"<a class='dropdown-item printResiAll' href='#' data-mismassInvoiceId='".$list->mismass_invoice_id."'>Print Resi All</a>":""):""):"";
+                // $invoiceBtn = Auth::user()->shiplist_printout_invoice?"<a class='dropdown-item' href='" . url('/printout/invoice/' . $this->invOnlyId($list->mismass_invoice_id)) . "' target='_blank'>Print Invoice</a>":"";
+                // $wholeBtn = "<div class='btn-group dropleft'><button type='button' class='btn btn-secondary nobtn' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-ellipsis-v'></i></button><div class='dropdown-menu' x-placement='right-start' style='position: absolute; transform: translate3d(111px, 0px, 0px); top: 0px; left: 0px; will-change: transform;'>".$resiBtnAll.$invoiceBtn."</div></div>";
                 
+                // $no++;
+                // $row = [];
+                // $row[] = "<div class='orderNum'>".$no."</div>".$detailControl;
+                // $row[] = "<div style='font-weight:bold'>".$list->mismass_invoice_id."</div><div>".$this->dateFormatIndo($list->mismass_invoice_date,1)."</div>";
+                // $row[] = "<div style='font-weight:bold'>".$list->doku_invoice_id."</div>".$invoiceStatus;
+                // $row[] = "<div>".$list->updated_by."</div>".$jabatan."<div>".$this->dateFormatIndo($list->updated_at,2)."</div>";
+                // $row[] = "<div>".$list->sender_first_name." ".$list->sender_middle_name." ".$list->sender_last_name."</div>";
+                // $row[] = "<div>".$list->sender_phone."</div><div>".$addressFull."</div>";
+                // $row[] = "<div>".number_format((float)$list->totalWeight, 2, '.', '')." Kg</div><div>".$list->totalItem." Item</div><div>".$list->totalCbm." CBM</div>";
+                // $row[] = "<div>Total : ".$this->rupiah($list->totalPrice+$list->totalDisc)."</div><div>Diskon : ".$this->rupiah($list->totalDisc)."</div><div style='font-weight:bold'>Total Biaya : ".$this->rupiah($list->totalPrice)."</div><div><a href='".$list->doku_link."' target='_blank'>".$list->doku_link."</a></div>";
+                // $row[] = $wholeBtn;
+
+                // $data[] = $row;
+
+                $forwarder = $list->forwarder_id == "MISMASS" ? $list->forwarder_id." - ".$list->forwarder_name : ($list->forwarder_id=="PICK-UP" ? "<div style='color:red'>PICK-UP SENDIRI</div>" : $list->forwarder_name);
+
                 $no++;
                 $row = [];
                 $row[] = $no;
-                $row[] = "<div style='font-weight:700'>" . $list->updated_by . "</div>".$jabatan."<div>" . $this->dateFormatIndo($list->updated_at,2) . "</div>";
-                $row[] = "<div style='font-weight:700'>" . $list->first_name . " " . $list->middle_name . " " . $list->last_name . "</div><div>CP" . strval($list->id) . "</div>";
-                $row[] = "<div>" . $list->phone . "</div><div>" . $list->email . "</div><div>" . $list->address . ", " . $list->sub_district . ", " . $list->district . ", " . $list->city . ", " . $list->prov . ", " . $list->postal_code . "</div>";
-                $row[] = "<div>".$this->hitungInvoiceCust($list->id)."</div>";
-                $row[] = "<div>".$this->hitungResiCust($list->id)."</div>";
-                $row[] = "<div>".number_format((float)$this->hitungBeratCust($list->id,0), 2, '.', '')." Kg</div><div>".$this->hitungItemCust($list->id,0)." Item</div><div>".round($this->hitungCbmCust($list->id,0),2)." CBM</div>";
+                $row[] = "<div class='font-weight-bold'>" . $forwarder . "</div><div class='font-weight-bold'>" . $list->shipping_number . "</div>";
+                $row[] = $list->cons_first_name." ".$list->cons_middle_name." ".$list->cons_last_name;
+                $row[] = "<div>".$list->cons_phone."</div><div>".$list->cons_address.", ".$list->cons_sub_district.", ".$list->cons_district.", ".$list->cons_city.", ".$list->cons_prov.", ".$list->cons_postal_code."</div>";
+                $row[] = "<div>" . number_format((float)$list->totalWeight, 2, '.', '') . " KG</div><div>" . $list->totalItem . " Item</div><div>".round($list->totalCbm,2)." CBM</div>";
                 
-                if(Auth::user()->custlist_nom){
-                    $row[] = "<div style='font-weight:700'>".$this->rupiah($this->hitungLabaCust($list->id,0))."</div>";
-                }
-                
-                if(Auth::user()->role_id=="537469"){
-                    $row[] = $list->reference!=""?strtoupper(DB::table("users")->where("id",$list->reference)->value("fullname")):"<button type='button' data-id=".$list->id." data-name=".$list->first_name." ".$list->middle_name." ".$list->last_name." class='btn bg-gradient-success applyBtn'><i class='fas fa-user-plus'></i> Apply</button>";
-                }else{
-                    $row[] = $list->reference!=""?strtoupper(DB::table("users")->where("id",$list->reference)->value("fullname")):"-";
-                }
-
-                if(Auth::user()->custlist_edit||Auth::user()->custlist_hapus){
-                    $row[] = $wholeBtn;
-                }
+                // if(Auth::user()->shiplist_printout_resi){
+                $row[] = "<a class='btn btn-success' href='" . url('/printout/resi/' . $this->resiNoGaring($this->resiOnlyId($list->shipping_number, $list->forwarder_id))) . "=' target='_blank'><i class='fas fa-print'></i></a>";
+                // }
 
                 $data[] = $row;
             }
@@ -81,8 +122,8 @@ class DiskonController extends Controller
 
         $output = [
             'draw' => $request->input('draw'),
-            'recordsTotal' => $diskonModel->countAll(),
-            'recordsFiltered' => $diskonModel->countFiltered($request, $search, $custTypeId),
+            'recordsTotal' => $diskonModel->countAll($request, $search, $filter),
+            'recordsFiltered' => $diskonModel->countFiltered($request, $search, $filter),
             'data' => $data
         ];
 

@@ -16,8 +16,8 @@ function loadData(){
         data: {'filterWarehouse':filterWarehouse,'filterBulan':filterBulan,'filterTahun':filterTahun},
         success: function(msg) {
             var json = JSON.parse(msg),
-                totalBeratInd = json.totalBeratInd!=null?json.totalBeratInd.toFixed(2).replace(".",",")+" Kg":'0,00 Kg',
-                totalBeratCor = json.totalBeratCor!=null?json.totalBeratCor.toFixed(2).replace(".",",")+" Kg":'0,00 Kg',
+                totalBeratInd = json.totalBeratInd!=null?masking(json.totalBeratInd.toFixed(2))+" Kg":'0,00 Kg',
+                totalBeratCor = json.totalBeratCor!=null?masking(json.totalBeratCor.toFixed(2))+" Kg":'0,00 Kg',
                 totalBerat = json.totalBerat!=null?masking(json.totalBerat.toFixed(2))+' Kg':'0,00 Kg',
                 totalCbmInd = json.totalCbmInd!=null?json.totalCbmInd.toFixed(2).replace(".",",")+" CBM":'0,00 CBM',
                 totalCbmCor = json.totalCbmCor!=null?json.totalCbmCor.toFixed(2).replace(".",",")+" CBM":'0,00 CBM',
