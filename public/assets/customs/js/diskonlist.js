@@ -2,8 +2,25 @@ $("#navChooseCust .nav-item .nav-link").on("click",function(){
     let id = $(this).attr("id"),
         custTypeId = id=="I"?"IND":"COR";
 
-        refreshTable(tableDisc,location.origin+"/diskonlist/table/"+custTypeId+"?mismassOrderId=&CustomerId=&filterTanggalAwal=&filterTanggalAkhir=","table_info");
+    refreshTable(tableDisc,location.origin+"/diskonlist/table/"+custTypeId+"?mismassOrderId=&customerId=&filterTanggalAwal=&filterTanggalAkhir=","table_info");
+    getCustomerListDisc(custTypeId);
+    $('select[name="customerId"]').val("").trigger("change");
+    $('#filterTanggalAwal,#filterTanggalAkhir').val(moment().format('DD-MM-YYYY'));
 
+    $.ajax({
+        type: "GET",
+        data:{
+            "custTypeId":custTypeId,
+            "customerId":null,
+            "filterTanggalAwal":"",
+            "filterTanggalAkhir":""
+        },
+        url: location.origin+"/check/gettotaldisc",
+        success: function(data) {
+            let a = JSON.parse(data);
+            $("h1").text("Rp."+masking(a.data));
+        }
+    });
 });
 
 $("select[name='customerId']").select2();
@@ -14,6 +31,56 @@ $('#filterTanggalAwal,#filterTanggalAkhir').daterangepicker({
     locale: {
         format: 'DD-MM-YYYY'
     },
+});
+
+$("#reset").on("click",function(){
+    let id = $("#navChooseCust .nav-item .active").attr("id"),
+        custTypeId = id=="I"?"IND":"COR";
+
+    refreshTable(tableDisc,location.origin+"/diskonlist/table/"+custTypeId+"?mismassOrderId=&customerId=&filterTanggalAwal=&filterTanggalAkhir=","table_info");
+
+    $('select[name="customerId"]').val("").trigger("change");
+    $('#filterTanggalAwal,#filterTanggalAkhir').val(moment().format('DD-MM-YYYY'));
+
+    $.ajax({
+        type: "GET",
+        data:{
+            "custTypeId":custTypeId,
+            "customerId":null,
+            "filterTanggalAwal":"",
+            "filterTanggalAkhir":""
+        },
+        url: location.origin+"/check/gettotaldisc",
+        success: function(data) {
+            let a = JSON.parse(data);
+            $("h1").text("Rp."+masking(a.data));
+        }
+    });
+});
+
+$("#view").on("click",function(){
+    let id = $("#navChooseCust .nav-item .active").attr("id"),
+        custTypeId = id=="I"?"IND":"COR",
+        customerId = $("select[name='customerId']").val(),
+        filterTanggalAwal = $("#filterTanggalAwal").val(),
+        filterTanggalAkhir = $("#filterTanggalAkhir").val();
+
+        refreshTable(tableDisc,location.origin+"/diskonlist/table/"+custTypeId+"?mismassOrderId=&customerId="+customerId+"&filterTanggalAwal="+filterTanggalAwal+"&filterTanggalAkhir="+filterTanggalAkhir,"table_info");    
+
+        $.ajax({
+            type: "GET",
+            data:{
+                "custTypeId":custTypeId,
+                "customerId":customerId,
+                "filterTanggalAwal":filterTanggalAwal,
+                "filterTanggalAkhir":filterTanggalAkhir
+            },
+            url: location.origin+"/check/gettotaldisc",
+            success: function(data) {
+                let a = JSON.parse(data);
+                $("h1").text("Rp."+masking(a.data));
+            }
+        });
 });
 
 $("table").on("click",".printResiAll",function(){
@@ -179,6 +246,21 @@ var tableDisc = $('#table').DataTable({
         "processing": dt_processing,
     }
 });
+
+function getCustomerListDisc(custTypeId){
+    $.ajax({
+        type: "GET",
+        data:{
+            "custTypeId":custTypeId
+        },
+        url: location.origin+"/check/getcustlistdisc",
+        success: function(data) {
+            let a = JSON.parse(data);
+            $("select[name='customerId']").html("");
+            $("select[name='customerId']").html(a.data);
+        }
+    });
+}
 
 // var tableCor = $('#tableCor').DataTable({
 //     "paging": true,

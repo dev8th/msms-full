@@ -34,6 +34,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::controller(AppController::class)->group(function () {
         Route::get('/', 'index')->name('app.index');
         Route::get('/check/getcustlist', 'getCustList')->name('app.getcustlist');
+        Route::get('/check/getcustlistdisc', 'getCustListDisc')->name('app.getcustlistdisc');
+        Route::get('/check/gettotaldisc', 'getTotalDisc')->name('app.gettotaldisc');
         Route::get('/check/getservlist', 'getServList')->name('app.getservlist');
         Route::get('/check/getservdata', 'getServData')->name('app.getservdata');
         Route::get('/check/getcustdata', 'getCustData')->name('app.getcustdata');

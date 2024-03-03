@@ -182,7 +182,7 @@
                     <div class="icon">
                         <i class="fas fa-tags" style="color: rgb(0,0,0,0.2);"></i>
                     </div>
-                    <a class="small-box-footer" href="#" id="diskonlist000" link="{{url('/diskonlist')}}">
+                    <a class="small-box-footer" href="#" id="diskonlist" link="{{url('/diskonlist')}}">
                         <div id="totalDiskonInd">Individual : Rp.-</div>
                         <div id="totalDiskonCor">Corporate : Rp.-</div>
                     </a>

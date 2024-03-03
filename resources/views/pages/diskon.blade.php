@@ -23,7 +23,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6 mb-3">
-                <h1>Rp.26.000.000</h1>
+                <h1>{{App\Http\Controllers\Controller::rupiah($totaldiskon)}}</h1>
             </div>
         </div>
         <div class="row">
@@ -61,8 +61,8 @@
                                     Action
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                    <a id="viewTwo" class="dropdown-item" href="#!"><i class="fas fa-search"></i> Cari</a>
-                                    <a id="resetTwo" class="dropdown-item" href="#!"><i class="fas fa-sync-alt"> Reset</i></a>
+                                    <a id="view" class="dropdown-item" href="#!"><i class="fas fa-search"></i> Cari</a>
+                                    <a id="reset" class="dropdown-item" href="#!"><i class="fas fa-sync-alt"> Reset</i></a>
                                     <!-- <a class="dropdown-item" href="#!">Action</a>
                                     <a class="dropdown-item" href="#!">Another action</a> -->
                                 </div>

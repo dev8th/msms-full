@@ -1374,14 +1374,14 @@ function onChangeSatuanBerat(a){
         $("#"+modalId+" #"+serviceElementId+" .col-kg").show();
         $("#"+modalId+" #"+serviceElementId+" .col-volume,"+
           "#"+modalId+" #"+serviceElementId+" .col-item,"+
-          "#"+modalId+" #"+serviceElementId+" .col-actual"+
-          "#"+modalId+" #"+serviceElementId+" .col-cbm,").hide();
+          "#"+modalId+" #"+serviceElementId+" .col-actual,"+
+          "#"+modalId+" #"+serviceElementId+" .col-cbm").hide();
         $("#"+modalId+" #"+serviceElementId+" input[name='kg[]']").attr("required",true).attr("readonly",false);
         $("#"+modalId+" #"+serviceElementId+" input[name='panjang[]'],"+
           "#"+modalId+" #"+serviceElementId+" input[name='lebar[]'],"+
           "#"+modalId+" #"+serviceElementId+" input[name='tinggi[]'],"+
           "#"+modalId+" #"+serviceElementId+" input[name='item[]'],"+
-          "#"+modalId+" #"+serviceElementId+" input[name='actualKg[],"+
+          "#"+modalId+" #"+serviceElementId+" input[name='actualKg[]'],"+
           "#"+modalId+" #"+serviceElementId+" input[name='cbm[]']").attr("required",false);
         $("#"+modalId+" #"+serviceElementId+" label[for='pricePer']").html("Harga/Kg");
         $("#"+modalId+" #"+formId).validate();

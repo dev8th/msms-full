@@ -268,6 +268,41 @@ class AppController extends Controller
         return json_encode($encode);
     }
 
+    public function getCustListDisc(Request $request){
+        $id = $request->input("custTypeId");
+        $custModel = new Customer;
+        $get = $custModel::where("cust_type_id", "=", $id)->where("id", "!=", "000000")->get();
+        
+        $data = "<option value=''>ALL Client</option>";
+        if($id=="IND"){
+            $data = "<option value=''>ALL Customer</option>";
+        }
+
+        foreach ($get as $g) {
+            $data .= "<option value='" . $g->id . "'>" . $g->first_name . " " . $g->middle_name . " " . $g->last_name . "</option>";
+        }
+
+        $encode = array("data" => $data);
+
+        return json_encode($encode);
+    }
+
+    public function getTotalDisc(Request $request){
+        $custTypeId = $request->input("custTypeId");
+        $customerId = $request->input("customerId");
+        $filterTanggalAwal = $request->input("filterTanggalAwal");
+        $filterTanggalAkhir = $request->input("filterTanggalAkhir");
+
+        $where = "cust_type_id='$custTypeId' AND cust_id='$customerId' AND mismass_invoice_date BETWEEN '" . date("Y-m-d", strtotime($filterTanggalAwal)) . " 00:00:00' AND '" . date("Y-m-d", strtotime($filterTanggalAkhir)) . " 23:59:59'";
+        if($customerId==null){
+            $where = "cust_type_id='$custTypeId'";
+        }
+
+        $data = DB::table("data_list")->selectRaw("sum(discount) as totaldiskon")->whereRaw($where)->value("totaldiskon");
+        $encode = array("data" => $data);
+        return json_encode($encode);
+    }
+
     public function getServList(Request $request)
     {
         $data = "<option value=''>ALL SERVICES</option>";
