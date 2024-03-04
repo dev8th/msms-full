@@ -46,7 +46,7 @@ class Diskon extends Model
 
         $filterTanggal = $filter[0] != null && $filter[1] != null ? "AND data_list.mismass_invoice_date BETWEEN '" . date("Y-m-d", strtotime($filter[0])) . " 00:00:00' AND '" . date("Y-m-d", strtotime($filter[1])) . " 23:59:59'" : "";
         $filterCustomer = $filter[2] != null && $filter[2] != "" ? "AND data_list.cust_id='" . $filter[2] . "'" : "";
-        $query = $filter[3] == "IND" ? "data_list.cust_type_id='IND' $filterCustomer $filterTanggal AND data_list.discount!=0" : "data_list.cust_type_id='COR' $filterCustomer $filterTanggal AND data_list.discount!=0";
+        $query = $filter[3] == "IND" ? "data_list.cust_type_id='IND' $filterCustomer $filterTanggal AND data_list.discount!=0 " : "data_list.cust_type_id='COR' $filterCustomer $filterTanggal AND data_list.discount!=0 ";
         $groupBy = "data_list.mismass_invoice_id";
         if($filter[4]!=""){
             $query = "data_list.mismass_order_id='$filter[4]'";
