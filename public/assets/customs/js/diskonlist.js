@@ -18,7 +18,7 @@ $("#navChooseCust .nav-item .nav-link").on("click",function(){
         url: location.origin+"/check/gettotaldisc",
         success: function(data) {
             let a = JSON.parse(data);
-            $("h1").text("Rp."+masking(a.data));
+            $("h1").html("Total Diskon : <div class='font-weight-bold' style='display:inline'>Rp."+masking(a.data)+"</div>");
         }
     });
 });
@@ -53,7 +53,7 @@ $("#reset").on("click",function(){
         url: location.origin+"/check/gettotaldisc",
         success: function(data) {
             let a = JSON.parse(data);
-            $("h1").text("Rp."+masking(a.data));
+            $("h1").html("Total Diskon : <div class='font-weight-bold' style='display:inline'>Rp."+masking(a.data)+"</div>");
         }
     });
 });
@@ -78,7 +78,7 @@ $("#view").on("click",function(){
             url: location.origin+"/check/gettotaldisc",
             success: function(data) {
                 let a = JSON.parse(data);
-                $("h1").text("Rp."+masking(a.data));
+                $("h1").html("Total Diskon : <div class='font-weight-bold' style='display:inline'>Rp."+masking(a.data)+"</div>");
             }
         });
 });

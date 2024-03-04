@@ -43,7 +43,8 @@ class DiskonController extends Controller
 
                 $getData = DB::table('data_list')->select('id','sub_total','weight','item','length','height','width','cons_first_name','cons_middle_name','cons_last_name','cons_phone','cons_address','cons_sub_district','cons_district','cons_city','cons_prov','cons_postal_code','forwarder_id','forwarder_name','shipping_number','shipping_number_stats')->where('mismass_invoice_id',$list->mismass_invoice_id)->get();
                 $countRow = count($getData);
-                $detailControl = $custTypeId=="COR" ? "<div class='detail-control hidden-child' id='" . $list->mismass_order_id . "' data-createdAt='".$this->dateFormatIndo($list->shipping_created_at,1)."'></div>":"<input type='checkbox' style='margin-left:4px' name='checkResi' data-resi='".$this->resiOnlyId($list->shipping_number, $list->forwarder_id)."'>";
+                $detcountind="<input type='checkbox' style='margin-left:4px' name='checkResi' data-resi='".$this->resiOnlyId($list->shipping_number, $list->forwarder_id)."'>";
+                $detailControl = $custTypeId=="COR" ? "<div class='detail-control hidden-child' id='" . $list->mismass_order_id . "' data-createdAt='".$this->dateFormatIndo($list->shipping_created_at,1)."'></div>":"";
                 $dokuInvoiceId = $list->doku_invoice_id!="" ? $list->doku_invoice_id : "-";
                 $forwarder = $list->forwarder_id == "MISMASS" ? $list->forwarder_id." - ".$list->forwarder_name : ($list->forwarder_id=="PICK-UP" ? "<div style='color:red'>PICK-UP SENDIRI</div>" : $list->forwarder_name);
                 $shippingNumber = $list->shipping_number_stats==1?"<div style='color:red'>".$list->shipping_number."</div>":$list->shipping_number;
@@ -57,7 +58,7 @@ class DiskonController extends Controller
                 $resiBtn = Auth::user()->shiplist_printout_resi?($custTypeId=="IND" ? "<a class='dropdown-item' href='" . url('/printout/resi/' . $this->resiNoGaring($this->resiOnlyId($list->shipping_number, $list->forwarder_id)).'=') . "' target='_blank'>Print Resi</a>" : ""):"";
                 $resiBtnAll = Auth::user()->shiplist_printout_resi?"<a class='dropdown-item printResiAll' href='#' data-mismassInvoiceId='".$list->mismass_invoice_id."'>Print Resi All</a>":"";
                 $invoiceBtn = Auth::user()->shiplist_printout_invoice?"<a class='dropdown-item' href='" . url('/printout/invoice/' . $this->invOnlyId($list->mismass_invoice_id)) . "' target='_blank'>Print Invoice</a>":"";
-                $wholeBtn = "<div class='btn-group dropleft'><button type='button' class='btn btn-secondary nobtn' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-ellipsis-v'></i></button><div class='dropdown-menu' x-placement='right-start' style='position: absolute; transform: translate3d(111px, 0px, 0px); top: 0px; left: 0px; will-change: transform;'>".$resiBtn.$resiBtnAll.$invoiceBtn."</div></div>";
+                $wholeBtn = "<div class='btn-group dropleft'><button type='button' class='btn btn-secondary nobtn' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-ellipsis-v'></i></button><div class='dropdown-menu' x-placement='right-start' style='position: absolute; transform: translate3d(111px, 0px, 0px); top: 0px; left: 0px; will-change: transform;'>".$resiBtn.$invoiceBtn."</div></div>";
 
                 $no++;
                 $row = [];

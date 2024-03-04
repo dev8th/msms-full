@@ -23,7 +23,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6 mb-3">
-                <h1>{{App\Http\Controllers\Controller::rupiah($totaldiskon)}}</h1>
+                <h1>Total Diskon : <div class="font-weight-bold" style='display:inline'>{{App\Http\Controllers\Controller::rupiah($totaldiskon)}}</div></h1>
             </div>
         </div>
         <div class="row">
