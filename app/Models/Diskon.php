@@ -34,14 +34,6 @@ class Diskon extends Model
     {
 
         $column_search = Diskon::columnSearch($filter[4]);
-
-        // $filter = [
-        //     $filterTanggalAwal,
-        //     $filterTanggalAkhir,
-        //     $filterCustomerId,
-        //     $custTypeId,
-        //     $filterOrderId
-        // ];
         $select = "data_list.*,sum(data_list.weight) as totalWeight,sum(data_list.item) as totalItem,sum(data_list.cbm) as totalCbm,sum(data_list.discount) as totalDisc,sum(data_list.sub_total) as totalPrice";
 
         $filterTanggal = $filter[0] != null && $filter[1] != null ? "AND data_list.mismass_invoice_date BETWEEN '" . date("Y-m-d", strtotime($filter[0])) . " 00:00:00' AND '" . date("Y-m-d", strtotime($filter[1])) . " 23:59:59'" : "";

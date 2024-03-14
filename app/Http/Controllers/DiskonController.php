@@ -12,7 +12,11 @@ class DiskonController extends Controller
     public function index()
     {
         $this->roleAccess();
-        $data['cust'] = DB::table("cust_list")->where("cust_type_id","IND")->orderBy("first_name","asc")->get();
+        $data['cust'] = DB::table("cust_list")
+                        ->selectRaw("cust_list.*,(SELECT sum(data_list.discount) FROM data_list WHERE data_list.cust_id=cust_list.id) as totalDiskon")
+                        ->where("cust_list.cust_type_id","IND")
+                        ->orderBy("cust_list.first_name","asc")
+                        ->get();
         $data['totaldiskon'] = DB::table("data_list")->selectRaw("sum(discount) as totaldiskon")->where("cust_type_id","IND")->value("totaldiskon");
         return view('pages.diskon',$data);
     }

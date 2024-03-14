@@ -43,7 +43,9 @@
                             <select name="customerId" id="customerId" class="form-control" style="width:100%">
                                 <option value="">ALL CUSTOMER</option>
                                 @foreach($cust as $c)
-                                    <option value="{{$c->id}}">{{$c->first_name}} {{$c->middle_name}} {{$c->last_name}}</option>
+                                    @if($c->totalDiskon>0)
+                                        <option value="{{$c->id}}">{{$c->first_name}} {{$c->middle_name}} {{$c->last_name}}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>

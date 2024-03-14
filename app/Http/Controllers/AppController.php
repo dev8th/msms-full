@@ -271,7 +271,11 @@ class AppController extends Controller
     public function getCustListDisc(Request $request){
         $id = $request->input("custTypeId");
         $custModel = new Customer;
-        $get = $custModel::where("cust_type_id", "=", $id)->where("id", "!=", "000000")->get();
+        $get = $custModel::selectRaw("cust_list.*,(SELECT sum(data_list.discount) FROM data_list WHERE data_list.cust_id=cust_list.id) as totalDiskon")
+                            ->where("cust_type_id", "=", $id)
+                            ->where("id", "!=", "000000")
+                            ->orderBy("cust_list.first_name","asc")
+                            ->get();
         
         $data = "<option value=''>ALL Client</option>";
         if($id=="IND"){
@@ -279,7 +283,9 @@ class AppController extends Controller
         }
 
         foreach ($get as $g) {
-            $data .= "<option value='" . $g->id . "'>" . $g->first_name . " " . $g->middle_name . " " . $g->last_name . "</option>";
+            if($g->totalDiskon>0){
+                $data .= "<option value='" . $g->id . "'>" . $g->first_name . " " . $g->middle_name . " " . $g->last_name . "</option>";
+            }
         }
 
         $encode = array("data" => $data);
@@ -293,10 +299,18 @@ class AppController extends Controller
         $filterTanggalAwal = $request->input("filterTanggalAwal");
         $filterTanggalAkhir = $request->input("filterTanggalAkhir");
 
-        $where = "cust_type_id='$custTypeId' AND cust_id='$customerId' AND mismass_invoice_date BETWEEN '" . date("Y-m-d", strtotime($filterTanggalAwal)) . " 00:00:00' AND '" . date("Y-m-d", strtotime($filterTanggalAkhir)) . " 23:59:59'";
-        if($customerId==null){
-            $where = "cust_type_id='$custTypeId'";
+        $filterCustomer = " AND cust_id='$customerId'";
+        $filterTanggal = " AND mismass_invoice_date BETWEEN '" . date("Y-m-d", strtotime($filterTanggalAwal)) . " 00:00:00' AND '" . date("Y-m-d", strtotime($filterTanggalAkhir)) . " 23:59:59'";
+
+        if($customerId==null||$customerId==""){
+            $filterCustomer="";
         }
+
+        if($filterTanggalAwal==""||$filterTanggalAkhir==""){
+            $filterTanggal="";
+        }
+
+        $where = "cust_type_id='$custTypeId' $filterCustomer $filterTanggal";
 
         $data = DB::table("data_list")->selectRaw("sum(discount) as totaldiskon")->whereRaw($where)->value("totaldiskon");
         $encode = array("data" => $data);
