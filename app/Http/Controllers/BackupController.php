@@ -24,6 +24,7 @@ class BackupController extends Controller
         $jenisExport = $request->input("jenisexport");
         $idWarehouse = $request->input("idwarehouse") ?? "";
         $idCustomer = $request->input("idcustomer") ?? "";
+        $filterCustomer = $request->input("filtercustomer") ?? "";
         $reference = $request->input("reference") ?? "";
         $paymentStatus = $request->input("paymentStatus") ?? "";
         $tanggalAwal = $request->input("tanggalawal");
@@ -61,17 +62,39 @@ class BackupController extends Controller
             if($jenisExport=="BR"){
                 $viewExport = "export.backupindbyref";
                 $payStatusWhere = $paymentStatus=="ALL"? "" : "data_list.invoice_status='$paymentStatus' AND";
+                $filterCustWhere = $filterCustomer=="ALL"? "" : ($filterCustomer=="ADM" ? "order_list.created_by!='WEBFORM' AND" : "order_list.created_by='WEBFORM' AND");
+                $where = "cust_list.reference='$reference' AND $payStatusWhere $filterCustWhere data_list.cust_type_id='IND' AND data_list.created_at BETWEEN '$filterTanggalAwal' AND '$filterTanggalAkhir'";
                 $data['username'] = DB::table("users")->where("id",$reference)->value("username");
                 $data['fullname'] = DB::table("users")->where("id",$reference)->value("fullname");
+                $data['totalweight'] = DB::table("data_list")
+                                        ->selectRaw("SUM(data_list.weight) as value")
+                                        ->join("cust_list","cust_list.id","=","data_list.cust_id")
+                                        ->whereRaw($where)
+                                        ->value("value");
+                $data['totalcbm'] = DB::table("data_list")
+                                        ->selectRaw("SUM(data_list.cbm) as value")
+                                        ->join("cust_list","cust_list.id","=","data_list.cust_id")
+                                        ->whereRaw($where)
+                                        ->value("value");
+                $data['totalcustomer'] = count(DB::table("data_list")
+                                        ->selectRaw("data_list.cons_first_name")
+                                        ->join("cust_list","cust_list.id","=","data_list.cust_id")
+                                        ->whereRaw($where)
+                                        ->groupBy("data_list.cust_id")
+                                        ->get());
                 $data['tanggalTitle'] = $tanggalTitle;
                 $data['list'] = DB::table("data_list")
-                ->select(
-                    "data_list.*",
-                    "cust_list.id as custid",
-                    "cust_list.reference",
+                ->selectRaw(
+                    "data_list.*,
+                    cust_list.id as custid,
+                    cust_list.reference,
+                    order_list.created_by as ordercreatedby,
+                    order_list.created_at as ordercreatedat,
+                    (SELECT COUNT(data_list.cust_id) FROM data_list WHERE data_list.cust_id=cust_list.id) as jumlahkirim",
                     )
                 ->join("cust_list","cust_list.id","=","data_list.cust_id")
-                ->whereRaw("cust_list.reference='$reference' AND $payStatusWhere data_list.cust_type_id='IND' AND data_list.created_at BETWEEN '$filterTanggalAwal' AND '$filterTanggalAkhir'")
+                ->join("order_list","order_list.id","=","data_list.mismass_order_id")
+                ->whereRaw($where)
                 ->orderBy("data_list.created_at","asc")
                 ->groupBy("data_list.id")
                 ->get();
@@ -154,17 +177,39 @@ class BackupController extends Controller
             if($jenisExport=="BR"){
                 $viewExport = "export.backupcorbyref";
                 $payStatusWhere = $paymentStatus=="ALL"? "" : "data_list.invoice_status='$paymentStatus' AND";
+                $filterCustWhere = $filterCustomer=="ALL"? "" : ($filterCustomer=="ADM" ? "order_list.created_by!='WEBFORM' AND" : "order_list.created_by='WEBFORM' AND");
+                $where = "cust_list.reference='$reference' AND $payStatusWhere $filterCustWhere data_list.cust_type_id='COR' AND data_list.created_at BETWEEN '$filterTanggalAwal' AND '$filterTanggalAkhir'";
                 $data['username'] = DB::table("users")->where("id",$reference)->value("username");
                 $data['fullname'] = DB::table("users")->where("id",$reference)->value("fullname");
+                $data['totalweight'] = DB::table("data_list")
+                                        ->selectRaw("SUM(data_list.weight) as value")
+                                        ->join("cust_list","cust_list.id","=","data_list.cust_id")
+                                        ->whereRaw($where)
+                                        ->value("value");
+                $data['totalcbm'] = DB::table("data_list")
+                                        ->selectRaw("SUM(data_list.cbm) as value")
+                                        ->join("cust_list","cust_list.id","=","data_list.cust_id")
+                                        ->whereRaw($where)
+                                        ->value("value");
+                $data['totalcustomer'] = count(DB::table("data_list")
+                                        ->selectRaw("data_list.cons_first_name")
+                                        ->join("cust_list","cust_list.id","=","data_list.cust_id")
+                                        ->whereRaw($where)
+                                        ->groupBy("data_list.cust_id")
+                                        ->get());
                 $data['tanggalTitle'] = $tanggalTitle;
                 $data['list'] = DB::table("data_list")
-                ->select(
-                    "data_list.*",
-                    "cust_list.id as custid",
-                    "cust_list.reference",
+                ->selectRaw(
+                    "data_list.*,
+                    cust_list.id as custid,
+                    cust_list.reference,
+                    order_list.created_by as ordercreatedby,
+                    order_list.created_at as ordercreatedat,
+                    (SELECT COUNT(data_list.cust_id) FROM data_list WHERE data_list.cust_id=cust_list.id) as jumlahkirim"
                     )
                 ->join("cust_list","cust_list.id","=","data_list.cust_id")
-                ->whereRaw("cust_list.reference='$reference' AND $payStatusWhere data_list.cust_type_id='COR' AND data_list.created_at BETWEEN '$filterTanggalAwal' AND '$filterTanggalAkhir'")
+                ->join("order_list","order_list.id","=","data_list.mismass_order_id")
+                ->whereRaw($where)
                 ->orderBy("data_list.created_at","asc")
                 ->groupBy("data_list.id")
                 ->get();

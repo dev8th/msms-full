@@ -1402,6 +1402,8 @@ Send from website https://www.mismasslogistic.com",
             ->where("mismass_invoice_id", "like", "%" . $id)
             ->where("cbm", ">", 0)
             ->get();
+        
+        $data["template"] = DB::table("template_list")->where("status_id","1")->get();
 
         return view('printout.invoice', $data);
     }
@@ -1449,6 +1451,8 @@ Send from website https://www.mismasslogistic.com",
             ->where("mismass_invoice_id", "like", "%" . $id)
             ->where("cbm", ">", 0)
             ->get();
+        
+        $data["template"] = DB::table("template_list")->where("status_id","1")->get();
 
         return view('printout.invoice-editable', $data);
     }
@@ -1519,6 +1523,9 @@ Send from website https://www.mismasslogistic.com",
             ->where("mismass_invoice_id", "like", "%" . $id)
             ->where("cbm", ">", 0)
             ->get();
+        
+        
+        $data["template"] = DB::table("template_list")->where("status_id","1")->get();
 
         return view('printout.invoice', $data);
     }

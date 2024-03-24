@@ -90,6 +90,19 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row row-filterCustomer">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="filterCustomer">Filter Customer</label>
+                                        <select name="filterCustomer" id="filterCustomer" class="form-control" style="width:100%">
+                                            <option value="" hidden>Pilih Filter Customer</option>
+                                            <option value="ALL">Created By All</option>
+                                            <option value="ADM">Created By Admin</option>
+                                            <option value="WEB">Created By WEBFORM</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group">

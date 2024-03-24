@@ -1,6 +1,6 @@
 $("#formBackup #customer").select2();
 
-$(".row-export,.row-warehouse,.row-customer,.row-paymentStatus,.row-reference").hide();
+$(".row-export,.row-warehouse,.row-customer,.row-paymentStatus,.row-reference,.row-filterCustomer").hide();
 
 $("#formBackup #tipeCustomer").on("change",function(){
     $(".row-export").show();
@@ -13,16 +13,16 @@ $("#formBackup #jenisExport").on("change",function(){
     let value = $(this).val();
     if(value=="BW"){
         $(".row-warehouse").show();
-        $(".row-customer,.row-reference,.row-paymentStatus").hide();
+        $(".row-customer,.row-reference,.row-paymentStatus,.row-filterCustomer").hide();
         $("#warehouse").attr("required",true);
-        $("#customer,#reference,#paymentStatus").attr("required",false);
-        $("#warehouse,#customer,#reference").val("");
+        $("#customer,#reference,#paymentStatus,#filterCustomer").attr("required",false);
+        $("#warehouse,#customer,#reference,#filterCustomer").val("");
     }else if(value=="BR"){
-        $(".row-reference,.row-paymentStatus").show();
+        $(".row-reference,.row-paymentStatus,.row-filterCustomer").show();
         $(".row-customer,.row-warehouse").hide();
-        $("#reference,#paymentStatus").attr("required",true);
+        $("#reference,#paymentStatus,#filterCustomer").attr("required",true);
         $("#customer,#warehouse").attr("required",false);
-        $("#warehouse,#customer,#reference").val("");
+        $("#warehouse,#customer,#reference,#filterCustomer").val("");
     }else{
         let custTypeId = $("#tipeCustomer").val();
         $.ajax({
@@ -34,13 +34,13 @@ $("#formBackup #jenisExport").on("change",function(){
             success: function(msg) {
                 var json = JSON.parse(msg);
                 $(".row-customer").show();
-                $(".row-warehouse,.row-reference,.row-paymentStatus").hide();
+                $(".row-warehouse,.row-reference,.row-paymentStatus,.row-filterCustomer").hide();
 
                 $("#customer").html(json.data);
 
                 $("#warehouse,#customer,#reference").val("");
                 
-                $("#warehouse,#reference,#paymentStatus").attr("required",false);
+                $("#warehouse,#reference,#paymentStatus,#filterCustomer").attr("required",false);
                 $("#customer").attr("required",true);
             }
         });
@@ -103,6 +103,7 @@ $("#formBackup").validate({
         warehouse: "Pilih Salah Satu",
         reference: "Pilih Salah Satu",
         paymentStatus: "Pilih Salah Satu",
+        filterCustomer: "Pilih Salah Satu",
         customer: "Pilih Salah Satu"
     },
     submitHandler: function(form) {
@@ -112,18 +113,19 @@ $("#formBackup").validate({
             idWarehouse = $("#"+form.id+" #warehouse").val(),
             idCustomer = $("#"+form.id+" #customer").val(),
             reference = $("#"+form.id+" #reference").val(),
+            filterCustomer = $("#"+form.id+" #filterCustomer").val(),
             paymentStatus = $("#"+form.id+" #paymentStatus").val(),
             tanggalAwal = $("#"+form.id+" #tanggalAwal").val(),
             tanggalAkhir = $("#"+form.id+" #tanggalAkhir").val();
 
         window.open(
-            location.origin+'/backup/export?tipecustomer='+tipeCustomer+'&reference='+reference+'&paymentStatus='+paymentStatus+'&jenisexport='+jenisExport+'&idwarehouse='+idWarehouse+'&idcustomer='+idCustomer+'&tanggalawal='+tanggalAwal+'&tanggalakhir='+tanggalAkhir,
+            location.origin+'/backup/export?tipecustomer='+tipeCustomer+'&reference='+reference+'&paymentStatus='+paymentStatus+'&jenisexport='+jenisExport+'&idwarehouse='+idWarehouse+'&idcustomer='+idCustomer+'&filtercustomer='+filterCustomer+'&tanggalawal='+tanggalAwal+'&tanggalakhir='+tanggalAkhir,
             '_blank'
         );    
 
         // $("#"+form.id).reset();
-        $(".row-export,.row-warehouse,.row-customer,.row-reference,.row-paymentStatus").hide();
-        $("#"+form.id+" #tipeCustomer,#"+form.id+" #warehouse,#"+form.id+" #customer,#"+form.id+" #reference,#"+form.id+" #paymentStatus").val("");
+        $(".row-export,.row-warehouse,.row-customer,.row-reference,.row-paymentStatus,.row-filterCustomer").hide();
+        $("#"+form.id+" #tipeCustomer,#"+form.id+" #warehouse,#"+form.id+" #customer,#"+form.id+" #reference,#"+form.id+" #paymentStatus,#"+form.id+" #filterCustomer").val("");
 
     }
 

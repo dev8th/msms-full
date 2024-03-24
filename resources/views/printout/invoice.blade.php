@@ -2,6 +2,12 @@
 $totalKgBulat=0;
 $totalCbmBulat=0;
 
+foreach($template as $t){
+    $companyName = $t->name;
+    $companyPhone = $t->phone;
+    $companyAddress = $t->address;
+}
+
 foreach($full as $f){
 $title = "Invoice ".$f->mismass_invoice_id;
 $custTypeId = $f->cust_type_id;
@@ -228,10 +234,14 @@ $forwarder = $forwarderId!="" ? ($forwarderId=="VENDOR" ? $forwarderName." | ".$
                                 <img style="width:70%;" src="https://barcode.tec-it.com/barcode.ashx?data={{$mismassInvoiceId}}&code=Code128&multiplebarcodes=false&translate-esc=true&unit=Fit&dpi=200&imagetype=Svg&rotation=0&color=%23212529&bgcolor=%23ffffff&codepage=Default&qunit=Mm&quiet=0" width="100%">
                             </div>
                             <div class="detil-pusat" style="margin-top:10px;">
-                                <div class="bold-text">Mismass Logistic Pte Ltd</div>
+                                <div class="bold-text">{{$companyName}}</div>
+                                <div>{{$companyAddress}}</div>
+                                <div>Phone : {{$companyPhone}}</div>
+                                <div class="bold-text">www.mismasslogistic.com</div>
+                                <!-- <div class="bold-text">Mismass Logistic Pte Ltd</div>
                                 <div>Eunos Techpark Lobby B 60 Kaki Bukit Place #06-01A Singapore 415979</div>
                                 <div>Phone : +62 812-1916-7783</div>
-                                <div class="bold-text">www.mismasslogistic.com</div>
+                                <div class="bold-text">www.mismasslogistic.com</div> -->
                                 <!-- <div class="bold-text">PT. Mismass Indo Group</div>
                                 <div>Jl. Mangga Raya Blok Q No. 447A. Kel. Duri Kepa, Kebon Jeruk, Jakarta Barat 11510, Indonesia</div>
                                 <div>Phone : +62 812-1916-7783</div>
