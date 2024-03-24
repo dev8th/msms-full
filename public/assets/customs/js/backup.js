@@ -48,6 +48,7 @@ $("#formBackup #jenisExport").on("change",function(){
 });
 
 $('#formBackup #tanggalAwal,#formBackupOps #tanggalAwal').daterangepicker({
+    drops:'up',
     singleDatePicker: true,
     showDropdowns: true,
     autoApply:true,
@@ -57,6 +58,7 @@ $('#formBackup #tanggalAwal,#formBackupOps #tanggalAwal').daterangepicker({
 });
 
 $('#formBackup #tanggalAkhir,#formBackupOps #tanggalAkhir').daterangepicker({
+    drops:'up',
     singleDatePicker: true,
     showDropdowns: true,
     autoApply:true,
@@ -70,6 +72,7 @@ $('#formBackup #tanggalAwal,#formBackupOps #tanggalAwal').on('apply.daterangepic
     $('#formBackup #tanggalAkhir,#formBackupOps #tanggalAkhir').val(minDate);
 
     $('#formBackup #tanggalAkhir,#formBackupOps #tanggalAkhir').daterangepicker({
+        drops:'up',
         singleDatePicker: true,
         showDropdowns: true,
         autoApply:true,
@@ -85,6 +88,7 @@ $('#formBackup #tanggalAwal,#formBackupOps #tanggalAwal').on('hide.daterangepick
     $('#formBackup #tanggalAkhir,#formBackupOps #tanggalAkhir').val(minDate);
 
     $('#formBackup #tanggalAkhir,#formBackupOps #tanggalAkhir').daterangepicker({
+        drops:'up',
         singleDatePicker: true,
         showDropdowns: true,
         autoApply:true,
