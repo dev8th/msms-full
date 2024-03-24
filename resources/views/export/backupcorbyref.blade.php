@@ -51,13 +51,13 @@ $invoiceOld="";
         <td height="17">Nama Lengkap</td>
         <td colspan=4 height="17">: <b>{{$fullname}}</b></td>
         <td height="17">Total Kilogram</td>
-        <td colspan=5 height="17">: <b>{{$totalweight}}</b></td>
+        <td colspan=5 height="17">: <b>{{round($totalweight,2)}}</b></td>
     </tr>
     <tr>
         <td height="17">Tipe Customer</td>
         <td colspan=4 height="17">: <b>Corporate</b></td>
         <td height="17">Total CBM</td>
-        <td colspan=5 height="17">: <b>{{$totalcbm}}</b></td>
+        <td colspan=5 height="17">: <b>{{round($totalcbm,2)}}</b></td>
     </tr>
     <tr>
         <th colspan=11 height="17" valign=middle class="middle"></th>
@@ -87,7 +87,7 @@ $invoiceOld="";
         <td align="center" valign=middle class="middle text-align-center">{{App\Http\Controllers\Controller::dateFormatIndo($l->created_at,3)}}</td>
         <td valign=middle class="middle"><b>{{$l->sender_first_name." ".$l->sender_middle_name." ".$l->sender_last_name}}</b><br>'{{$l->sender_phone}}<br>{{$l->sender_address.", ".$l->sender_sub_district.", ".$l->sender_district.", ".$l->sender_city.", ".$l->sender_prov.", ".$l->sender_postal_code}}</td>
         <td align="center" valign=middle class="middle text-align-center"><b>{{$l->ordercreatedby}}</b><br>Created At :<br>{{App\Http\Controllers\Controller::dateFormatIndo($l->ordercreatedat,3)}}</td></td>
-        <td align="center" valign=middle class="middle text-align-center"><?php echo $l->jumlahkirim>1 ? "<font color=red class='red'>OUT</font>" : "<font color=green class='green'>IN</font>" ?></td>
+        <td align="center" valign=middle class="middle text-align-center"><?php echo $l->jumlahkirim>1 ? "<font color=red class='red'>OC</font>" : "<font color=green class='green'>NC</font>" ?></td>
         <td align="center" valign=middle class="middle text-align-center"><b>{{$l->mismass_invoice_id}}</b></td>
         <td align="center" valign=middle class="middle text-align-center">{{$l->doku_invoice_id}}</td>
         <td align="center" valign=middle class="middle text-align-center"><?php echo $l->invoice_status=="PAID" ? "<font color=green class='green'>PAID</font>" : "<font color=red class='red'>UNPAID</font>" ?></td>
