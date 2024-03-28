@@ -400,6 +400,8 @@ Send from website https://www.mismasslogistic.com",
             $invoiceModel->service_price_per = isset($request->input("pricePer")[$i]) ? $this->normalizeInput($request->input("pricePer")[$i]) : 0;
 
             $invoiceModel->discount = $this->normalizeInput($request->input("discount" . $i));
+            $invoiceModel->additional_desc = $request->input("additionalDesc" . $i) ?? "";
+            $invoiceModel->additional_nom = $this->normalizeInput($request->input("additionalNominal" . $i));
             $invoiceModel->packing = $this->normalizeInput($request->input("packing" . $i));
             $invoiceModel->packing_per = $this->normalizeInput($request->input("packingPer" . $i));
             $invoiceModel->packing_total = $this->normalizeInput($request->input("packingTotal" . $i));
@@ -587,6 +589,8 @@ Send from website https://www.mismasslogistic.com",
                 $actualWeight = isset($request->input("actualKg")[$i]) ? $this->normalizeInput($request->input("actualKg")[$i]) : 0;
                 $item = isset($request->input("item")[$i]) ? $this->normalizeInput($request->input("item")[$i]) : 0;
                 $discount = $this->normalizeInput($request->input("discount" . $i));
+                $additional_desc = $request->input("additionalDesc" . $i) ?? "";
+                $additional_nom = $this->normalizeInput($request->input("additionalNominal" . $i));
                 $packing = $this->normalizeInput($request->input("packing" . $i));
                 $packing_per = $this->normalizeInput($request->input("packingPer" . $i));
                 $packing_total = $this->normalizeInput($request->input("packingTotal" . $i));
@@ -661,6 +665,8 @@ Send from website https://www.mismasslogistic.com",
                 $go->actual_weight != $actualWeight ? $n++ : '';
                 $go->item != $item ? $n++ : '';
                 $go->discount != $discount ? $n++ : '';
+                $go->additional_desc != $additional_desc ? $n++ : '';
+                $go->additional_nom != $additional_nom ? $n++ : '';
                 $go->packing != $packing ? $n++ : '';
                 $go->packing_per != $packing_per ? $n++ : '';
                 $go->packing_total != $packing_total ? $n++ : '';
@@ -776,6 +782,8 @@ Send from website https://www.mismasslogistic.com",
                             "service_name" => $request->input('serviceName'),
                             "service_price_per" => isset($request->input("pricePer")[$i]) ? $this->normalizeInput($request->input("pricePer")[$i]) : 0,
                             "discount" => $this->normalizeInput($request->input("discount" . $i)),
+                            "additional_nom" => $this->normalizeInput($request->input("additionalNominal" . $i)),
+                            "additional_desc" => $request->input("additionalDesc" . $i) ?? "",
                             "packing" => $this->normalizeInput($request->input("packing" . $i)),
                             "packing_per" => $this->normalizeInput($request->input("packingPer" . $i)),
                             "packing_total" => $this->normalizeInput($request->input("packingTotal" . $i)),

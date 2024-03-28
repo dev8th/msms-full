@@ -510,6 +510,17 @@ $forwarder = $forwarderId!="" ? ($forwarderId=="VENDOR" ? $forwarderName." | ".$
                             <td style="text-align:right"><?php echo $fc_symbol==""? App\Http\Controllers\Controller::rupiah($g->pickup_charge) : "S$ ".round($g->pickup_charge/$fc_value,2)?></td>
                         </tr>
                         @endif
+                        
+                        @if($g->additional_nom>0)
+                        <tr style='border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;'>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td style='color:blue'>Additonal : {{$g->additional_desc}}</td>
+                            <td></td>
+                            <td style="text-align:right"><?php echo $fc_symbol==""? App\Http\Controllers\Controller::rupiah($g->additional_nom) : "S$ ".round($g->additional_nom/$fc_value,2)?></td>
+                        </tr>
+                        @endif
                         <!--<tr style="border-top:1px solid #d5d5d5;border-bottom:1px solid black;">-->
                         <!--    <td></td>-->
                         <!--    <td></td>-->

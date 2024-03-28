@@ -622,6 +622,12 @@ class Controller extends BaseController
                     Tujuan : <b>".$g->extra_cost_dest."</b><br>
                     Vendor : <b>".$g->extra_cost_vendor_name."</b><br>
                     <br>":
+                    "").
+                    ($g->additional_nom>0?
+                    "<b>Additional</b><br>
+                    Deskripsi : <b>".$g->additional_desc."</b><br>
+                    Nominal : <b>".$this->rupiah($g->additional_nom)."</b><br>
+                    <br>":
                     "")."
                     Sub Total : <b>".$this->rupiah($g->sub_total)."</b><br>
                     </div>
@@ -733,6 +739,12 @@ class Controller extends BaseController
                     Tujuan : <b>".$g->extra_cost_dest."</b><br>
                     Vendor : <b>".$g->extra_cost_vendor_name."</b><br>
                     <br>":
+                    "").
+                    ($g->additional_nom>0?
+                    "<b>Additional</b><br>
+                    Deskripsi : <b>".$g->additional_desc."</b><br>
+                    Nominal : <b>".$this->rupiah($g->additional_nom)."</b><br>
+                    <br>":
                     "")."
                     Sub Total : <b>".$this->rupiah($g->sub_total)."</b><br>
                     </div>
@@ -782,6 +794,8 @@ class Controller extends BaseController
             $extraCostPrice = $this->normalizeInput($newData->input("extraCostPrice" . $i));
             $extraCostDest = $newData->input("extraCostDest" . $i) ?? "";
             $extraCostVendorName = $newData->input("extraCostVendorName" . $i) ?? "";
+            $additionalDesc = $newData->input("additionalDesc" . $i) ?? "";
+            $additionalNom = $this->normalizeInput($newData->input("additionalNominal" . $i));
             $subTotal = isset($newData->input("subTotal")[$i]) ? $this->normalizeInput($newData->input("subTotal")[$i]) : 0;
 
             $dataBaru.="<div style='border:1px solid black;padding:10px;border-radius:10px'>
@@ -872,6 +886,12 @@ class Controller extends BaseController
                     Nominal : <b>".$this->rupiah($extraCostPrice)."</b><br>
                     Tujuan : <b>".$extraCostDest."</b><br>
                     Vendor : <b>".$extraCostVendorName."</b><br>
+                    <br>":
+                    "").
+                    ($additionalNom>0?
+                    "<b>Additional</b><br>
+                    Deskripsi : <b>".$additionalDesc."</b><br>
+                    Nominal : <b>".$this->rupiah($additionalNom)."</b><br>
                     <br>":
                     "")."
                     Sub Total : <b>".$this->rupiah($subTotal)."</b><br>

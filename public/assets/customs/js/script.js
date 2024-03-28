@@ -603,6 +603,12 @@ function partialCalc(modalId,i){
         subTotalDiskon+=discountVal;
     }
 
+    if($("#"+modalId+" #"+i+" input[name='additionalNominal[]']").length>0){
+        additionalNomVal = parseInt($("#"+modalId+" #"+i+" input[name='additionalNominal[]']").val().replace(/\./g, ""));
+        $("#"+modalId+" #"+i+" input[name='additionalNominal"+i+"']").val(additionalNomVal);
+        subTotal+=additionalNomVal;
+    }
+
     if($("#"+modalId+" #"+i+" input[name='medicine[]']").length>0){
         medicineVal = parseInt($("#"+modalId+" #"+i+" input[name='medicine[]']").val().replace(/\./g, ""));
         medicinePerVal = parseInt($("#"+modalId+" #"+i+" input[name='medicinePer[]']").val().replace(/\./g, ""));
@@ -1092,6 +1098,8 @@ function createServiceElement(modalId){
     "<input type='hidden' name='discount"+id+"' class='form-control discount' value='0'>"+
     "<input type='hidden' name='hargaService"+id+"' class='form-control hargaService' value='0'>"+
     "<input type='hidden' name='hargaServiceAfter"+id+"' class='form-control hargaServiceAfter' value='0'>"+
+    "<input type='hidden' name='additionalDesc"+id+"' class='form-control additionalDesc' value=''>"+
+    "<input type='hidden' name='additionalNominal"+id+"' class='form-control additionalNominal' value='0'>"+
     "<div class='row'>"+
     "<div class='col'>"+
     "<h5>"+label+"#"+idUrut+"</h5>"+
@@ -1335,6 +1343,26 @@ function createServiceElement(modalId){
 }
 
 function createAdditionalServiceElement(id,serviceElementId){
+
+    if(id=="ADD"){
+        return "<div class='row' data-id='ADD'>"+
+        "<div class='col'>"+
+        "<div class='form-group'>"+
+        "<label for='AdditionalDesc'>Additional</label>"+
+        "<input type='text' name='additionalDesc[]' id='"+makeId(8)+"' onkeyup='this.value=this.value.toUpperCase()' class='form-control' required>"+
+        "</div>"+
+        "</div>"+
+        "<div class='col'>"+
+        "<div class='form-group'>"+
+        "<label for='AdditionalNominal'>Harga (Rp)</label>"+
+        "<input type='text' name='additionalNominal[]' id='"+makeId(8)+"' class='form-control masking' required>"+
+        "</div>"+
+        "</div>"+
+        "<div class='col-1' style='display:flex;align-items:end;padding-bottom:10px'>"+
+        "<button type='button' class='btn deleteAdditional' style='font-size:25px;color:red'><i class='fas fa-trash'></i></button>"+
+        "</div>"+
+        "</div>";
+    }
 
     if(id=="ASR"){
         return "<div class='row' data-id='ASR'>"+
@@ -1666,6 +1694,10 @@ function ruleForAdditional(id,serviceElementId,method,modalId){
     if(id=="DSK"){
         $("#"+modalId+" #"+serviceElementId+" input[name='discount[]']").rules(method, "greaterThanZero");
     }
+
+    if(id=="ADD"){
+        $("#"+modalId+" #"+serviceElementId+" input[name='additionalNominal[]']").rules(method, "greaterThanZero");
+    }
 }
 
 function removeAdditionalResetData(serviceElementId,addElementDataId,modalId){
@@ -1738,6 +1770,12 @@ function removeAdditionalResetData(serviceElementId,addElementDataId,modalId){
         $("#"+modalId+" #"+serviceElementId+" .hargaServiceAfter").val(0);
         return true;
     }
+
+    if(addElementDataId=="ADD"){
+        $("#"+modalId+" #"+serviceElementId+" .additionalDesc").val("");
+        $("#"+modalId+" #"+serviceElementId+" .additionalNominal").val(0);
+        return true;
+    }
 }
 
 masK = "###.###.###.###.###";
@@ -1749,6 +1787,7 @@ function keyUpFunc(){
     $(this).mask(masK, {
         reverse: true
     });
+    console.log(modalId);
     partialCalc(modalId,serviceElementId);
 }
 

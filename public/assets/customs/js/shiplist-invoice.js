@@ -284,6 +284,7 @@ $("table").on("click","#editInvoiceBtn",function(){
                     $("#"+modalId+" #"+num+" input[name='packingPer[]']").val(masking(e['packing_per']).toString());
                     $("#"+modalId+" #"+num+" input[name='packingTotal[]']").val(masking(e['packing_total']).toString());
                     $("#"+modalId+" #"+num+" input[name='packingDesc[]']").val(e['packing_desc']);
+                    $("#"+modalId+" #"+num+" input[name='packing"+num+"']").val(e['packing']);
                     $("#"+modalId+" #"+num+" input[name='packingPrice"+num+"']").val(e['packing_price']);
                     $("#"+modalId+" #"+num+" input[name='packingPer"+num+"']").val(e['packing_per']);
                     $("#"+modalId+" #"+num+" input[name='packingTotal"+num+"']").val(e['packing_total']);
@@ -374,6 +375,14 @@ $("table").on("click","#editInvoiceBtn",function(){
                     $("#"+modalId+" #"+num+" input[name='pickUpCharge[]']").val(masking(e['pickup_charge'].toString()));
                     $("#"+modalId+" #"+num+" input[name='pickUpWeight"+num+"']").val(e['pickup_weight']);
                     $("#"+modalId+" #"+num+" input[name='pickUpCharge"+num+"']").val(e['pickup_charge']);
+
+                    if(e['additional_nom']>0){
+                        onChangeAdditionalService($("#"+modalId+" #"+num+" select[name='additionalService']").val("ADD"));
+                    }
+                    $("#"+modalId+" #"+num+" input[name='additionalDesc[]']").val(e['additional_desc']);
+                    $("#"+modalId+" #"+num+" input[name='additionalNominal[]']").val(masking(e['additional_nom'].toString()));
+                    $("#"+modalId+" #"+num+" input[name='additionalDesc"+num+"']").val(e['additional_desc']);
+                    $("#"+modalId+" #"+num+" input[name='additionalNominal"+num+"']").val(e['additional_nom']);
     
                     $("#"+modalId+" #"+num+" input[name='subTotal[]']").val(masking(e['sub_total'].toString()));
     
@@ -659,6 +668,11 @@ $("#formBuatInvoice").validate({
             "required":"Tidak Boleh Kosong",
             "greaterThanZero":"Tidak Boleh Nol"
         },
+        "additionalDesc[]": "Tidak Boleh Kosong",
+        "additionalNominal[]": {
+            "required":"Tidak Boleh Kosong",
+            "greaterThanZero":"Tidak Boleh Nol"
+        },
         "discount[]": {
             "required":"Tidak Boleh Kosong",
             "greaterThanZero":"Tidak Boleh Nol"
@@ -849,6 +863,11 @@ $("#formEditInvoice").validate({
             "required":"Tidak Boleh Kosong",
             "greaterThanZero":"Tidak Boleh Nol"
         },
+        "additionalDesc[]": "Tidak Boleh Kosong",
+        "additionalNominal[]": {
+            "required":"Tidak Boleh Kosong",
+            "greaterThanZero":"Tidak Boleh Nol"
+        },
         "packing[]": {
             "required":"Tidak Boleh Kosong",
             "greaterThanZero":"Tidak Boleh Nol"
@@ -890,7 +909,7 @@ $("#formEditInvoice").validate({
     submitHandler: function(form) {
 
         $.ajax({
-            type: "POST",
+            type: "GET",
             url: location.origin+"/shiplist/edit/invoice",
             data: $(form).serialize(),
             beforeSend: function() {
@@ -1495,6 +1514,13 @@ $(document).on("keyup","input[name='lebar[]']",keyUpFunc);
 $(document).on("keyup","input[name='tinggi[]']",keyUpFunc);
 $(document).on("keyup","input[name='item[]']",keyUpFunc);
 $(document).on("keyup","input[name='discount[]']",keyUpFunc);
+$(document).on("keyup","input[name='additionalNominal[]']",keyUpFunc);
+$(document).on("keyup","input[name='additionalDesc[]']",function(){
+    let val = $(this).val(),
+        modalId = $(this).closest(".modal").attr("id"),
+        serviceElementId = $(this).closest("#"+modalId+" .services").attr("id");
+    $("#"+modalId+" input[name='additionalDesc"+serviceElementId+"']").val(val);
+});
 $(document).on("keyup","input[name='medicine[]']",keyUpFunc);
 $(document).on("keyup","input[name='medicineDesc[]']",function(){
     let val = $(this).val(),
