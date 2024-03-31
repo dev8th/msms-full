@@ -69,16 +69,19 @@ class BackupController extends Controller
                 $data['totalweight'] = DB::table("data_list")
                                         ->selectRaw("SUM(data_list.weight) as value")
                                         ->join("cust_list","cust_list.id","=","data_list.cust_id")
+                                        ->join("order_list","order_list.id","=","data_list.mismass_order_id")
                                         ->whereRaw($where)
                                         ->value("value");
                 $data['totalcbm'] = DB::table("data_list")
                                         ->selectRaw("SUM(data_list.cbm) as value")
                                         ->join("cust_list","cust_list.id","=","data_list.cust_id")
+                                        ->join("order_list","order_list.id","=","data_list.mismass_order_id")
                                         ->whereRaw($where)
                                         ->value("value");
                 $data['totalcustomer'] = count(DB::table("data_list")
                                         ->selectRaw("data_list.cons_first_name")
                                         ->join("cust_list","cust_list.id","=","data_list.cust_id")
+                                        ->join("order_list","order_list.id","=","data_list.mismass_order_id")
                                         ->whereRaw($where)
                                         ->groupBy("data_list.cust_id")
                                         ->get());
@@ -184,16 +187,19 @@ class BackupController extends Controller
                 $data['totalweight'] = DB::table("data_list")
                                         ->selectRaw("SUM(data_list.weight) as value")
                                         ->join("cust_list","cust_list.id","=","data_list.cust_id")
+                                        ->join("order_list","order_list.id","=","data_list.mismass_order_id")
                                         ->whereRaw($where)
                                         ->value("value");
                 $data['totalcbm'] = DB::table("data_list")
                                         ->selectRaw("SUM(data_list.cbm) as value")
                                         ->join("cust_list","cust_list.id","=","data_list.cust_id")
+                                        ->join("order_list","order_list.id","=","data_list.mismass_order_id")
                                         ->whereRaw($where)
                                         ->value("value");
                 $data['totalcustomer'] = count(DB::table("data_list")
                                         ->selectRaw("data_list.cons_first_name")
                                         ->join("cust_list","cust_list.id","=","data_list.cust_id")
+                                        ->join("order_list","order_list.id","=","data_list.mismass_order_id")
                                         ->whereRaw($where)
                                         ->groupBy("data_list.cust_id")
                                         ->get());
