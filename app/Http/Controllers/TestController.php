@@ -17,6 +17,42 @@ class TestController extends Controller
         // return view("test");
         abort(404);
     }
+
+
+    public function getToken(){
+        // $curl = curl_init();
+
+        // curl_setopt_array($curl, [
+        // CURLOPT_URL => "https://service-chat.qontak.com/oauth/token",
+        // CURLOPT_RETURNTRANSFER => true,
+        // CURLOPT_ENCODING => "",
+        // CURLOPT_MAXREDIRS => 10,
+        // CURLOPT_TIMEOUT => 30,
+        // CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        // CURLOPT_CUSTOMREQUEST => "POST",
+        // CURLOPT_POSTFIELDS => json_encode([
+        //     'username' => env("QONTAK_USERNAME"),
+        //     'password' => env("QONTAK_PASSWORD"),
+        //     'grant_type' => 'password',
+        //     'client_id' => env("QONTAK_CLIENT_ID"),
+        //     'client_secret' => env("QONTAK_CLIENT_SECRET")
+        // ]),
+        // CURLOPT_HTTPHEADER => [
+        //     "Content-Type: application/json"
+        // ],
+        // ]);
+
+        // $response = curl_exec($curl);
+        // $err = curl_error($curl);
+
+        // curl_close($curl);
+
+        // if ($err) {
+        // dd("cURL Error #:" . $err);
+        // } else {
+        // dd($response);
+        // }
+    }
     
     public function testing(Request $request)
     {

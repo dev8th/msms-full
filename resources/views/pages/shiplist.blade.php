@@ -383,6 +383,17 @@
                                     <input type="text" name="noRekening" id="noRekening" onkeyup="this.value=this.value.toUpperCase()" class="form-control">
                                 </div>
                             </div>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <label for="">Format Alamat untuk Invoice</label>
+                                    <select name="templateId" id="templateId" class="form-control" required>
+                                    <option value="" hidden>Pilih Format</option>
+                                    @foreach($template as $t)
+                                    <option value="{{$t->id}}">{{$t->name}}</option>
+                                    @endforeach
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer" style="justify-content: space-between;">
                             <div class="searchElem" style="width:50%;position:relative">
@@ -603,6 +614,17 @@
                                 <div class="col col-bank">
                                     <label for="">No. Rekening / Virtual Account</label>
                                     <input type="text" name="noRekening" id="noRekening" onkeyup="this.value=this.value.toUpperCase()" class="form-control">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <label for="">Format Alamat untuk Invoice</label>
+                                    <select name="templateId" id="templateId" class="form-control" required>
+                                    <option value="" hidden>Pilih Format</option>
+                                    @foreach($template as $t)
+                                    <option value="{{$t->id}}">{{$t->name}}</option>
+                                    @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>

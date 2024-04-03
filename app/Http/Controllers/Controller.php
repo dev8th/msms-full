@@ -514,6 +514,7 @@ class Controller extends BaseController
         Tanggal Invoice : <b>".$this->dateFormatIndo($getDataFirst->mismass_invoice_date,1)."</b><br>
         Tipe Order : <b>".DB::table("cust_type_list")->where("id",$getDataFirst->cust_type_id)->value("name")."</b><br>
         Konversi Mata Uang : <b>".($getDataFirst->fc_symbol!=""?$getDataFirst->fc_symbol." - ".$this->rupiah($getDataFirst->fc_value):"-")."</b><br> 
+        Format Alamat Invoice : <b>".DB::table("template_list")->where("id",$getDataFirst->template_id)->value("name")."</b><br> 
         <br>
         <b>Pengirim</b><br>
         Nama : <b>".$getDataFirst->sender_first_name." ".$getDataFirst->sender_middle_name." ".$getDataFirst->sender_last_name."</b><br>
@@ -908,10 +909,11 @@ class Controller extends BaseController
         <b style='font-size:20px'>DATA LAMA</b><br>
         Tanggal order : <b>".$this->dateFormatIndo($getOrderList->created_at,2)."</b><br>
         ID Sistem : <b>".$getOrderList->id."</b><br>
-        No. invoice Mismass: <b>".$newData->input('mismassInvoiceId')."</b><br>
+        No. invoice Mismass : <b>".$newData->input('mismassInvoiceId')."</b><br>
         Tanggal Invoice : <b>".$this->dateFormatIndo($getDataFirst->mismass_invoice_date,1)."</b><br>
         Tipe Order : <b>".DB::table("cust_type_list")->where("id",$getDataFirst->cust_type_id)->value("name")."</b><br>
         Konversi Mata Uang : <b>".($getDataFirst->fc_symbol!=""?$getDataFirst->fc_symbol." - ".$this->rupiah($getDataFirst->fc_value):"-")."</b><br> 
+        Format Alamat Invoice : <b>".DB::table("template_list")->where("id",$getDataFirst->template_id)->value("name")."</b><br>
         <br>
         <b>Pengirim</b><br>
         Nama : <b>".$getDataFirst->sender_first_name." ".$getDataFirst->sender_middle_name." ".$getDataFirst->sender_last_name."</b><br>
@@ -939,10 +941,11 @@ class Controller extends BaseController
         <b style='font-size:20px'>DATA BARU</b><br>
         Tanggal order : <b>".$this->dateFormatIndo($getOrderList->created_at,2)."</b><br>
         ID Sistem : <b>".$getOrderList->id."</b><br>
-        No. invoice Mismass: <b>".$newData->input('mismassInvoiceId')."</b><br>
+        No. invoice Mismass : <b>".$newData->input('mismassInvoiceId')."</b><br>
         Tanggal Invoice : <b>".$this->dateFormatIndo($newData->input("tanggalInvoice"),1)."</b><br>
         Tipe Order : <b>".DB::table("cust_type_list")->where("id",$getDataFirst->cust_type_id)->value("name")."</b><br>
         Konversi Mata Uang : <b>".($newData->input('foreignSymbol')!=""?$newData->input('foreignSymbol')." - ".$this->rupiah($this->normalizeInput($newData->input("foreignRateValue"))):"-")."</b><br> 
+        Format Alamat Invoice : <b>".DB::table("template_list")->where("id",$newData->input('templateId'))->value("name")."</b><br>
         <br>
         <b>Pengirim</b><br>
         Nama : <b>".$newData->input('senderFirstName')[0]." ".$newData->input('senderMiddleName')[0]." ".$newData->input('senderLastName')[0]."</b><br>
@@ -1539,4 +1542,5 @@ www.mismasslogistic.com";
         return $response;
 
     }
+
 }

@@ -319,6 +319,7 @@ Send from website https://www.mismasslogistic.com",
         $data['warehouse'] = $wareModel::all();
         $data['service'] = $servModel::all();
         $data['additional'] = DB::table("additional_list")->orderBy("order_byid", "asc")->get();
+        $data['template'] = DB::table("template_list")->get();
         return view('pages.shiplist', $data);
     }
 
@@ -383,6 +384,7 @@ Send from website https://www.mismasslogistic.com",
             $invoiceModel->bank_name = $request->input("namaBank") ?? "";
             $invoiceModel->bank_account_name = $request->input("namaRekening") ?? "";
             $invoiceModel->bank_account_id = $request->input("noRekening") ?? "";
+            $invoiceModel->template_id = $request->input("templateId");
             $invoiceModel->forwarder_id = "";
             $invoiceModel->shipping_number = "";
             $invoiceModel->shipping_created_at = "";
@@ -581,6 +583,7 @@ Send from website https://www.mismasslogistic.com",
                 $bank_name = $request->input("namaBank") ?? "";
                 $bank_account_name = $request->input("namaRekening") ?? "";
                 $bank_account_id = $request->input("noRekening") ?? "";
+                $template_id = $request->input("templateId");
                 $length = isset($request->input("panjang")[$i]) ? $this->normalizeInput($request->input("panjang")[$i]) : 0;
                 $width = isset($request->input("lebar")[$i]) ? $this->normalizeInput($request->input("lebar")[$i]) : 0;
                 $height = isset($request->input("tinggi")[$i]) ? $this->normalizeInput($request->input("tinggi")[$i]) : 0;
@@ -657,6 +660,7 @@ Send from website https://www.mismasslogistic.com",
                 $go->bank_name != $bank_name ? $n++ : '';
                 $go->bank_account_name != $bank_account_name ? $n++ : '';
                 $go->bank_account_id != $bank_account_id ? $n++ : '';
+                $go->template_id != $template_id ? $n++ : '' ;
                 $go->length != $length ? $n++ : '';
                 $go->width != $width ? $n++ : '';
                 $go->height != $height ? $n++ : '';
@@ -766,6 +770,7 @@ Send from website https://www.mismasslogistic.com",
                             "bank_name" => $request->input("namaBank") ?? "",
                             "bank_account_name" => $request->input("namaRekening") ?? "",
                             "bank_account_id" => $request->input("noRekening") ?? "",
+                            "template_id" => $request->input("templateId"),
                             "forwarder_id" => "",
                             "shipping_number" => "",
                             "shipping_created_at" => "",
@@ -1411,7 +1416,11 @@ Send from website https://www.mismasslogistic.com",
             ->where("cbm", ">", 0)
             ->get();
         
-        $data["template"] = DB::table("template_list")->where("status_id","1")->get();
+        $templateId = DB::table("data_list")
+                        ->where("mismass_invoice_id", "like", "%" . $id)
+                        ->value("template_id");
+
+        $data["template"] = DB::table("template_list")->where("id",$templateId)->get();
 
         return view('printout.invoice', $data);
     }
@@ -1532,8 +1541,11 @@ Send from website https://www.mismasslogistic.com",
             ->where("cbm", ">", 0)
             ->get();
         
-        
-        $data["template"] = DB::table("template_list")->where("status_id","1")->get();
+        $templateId = DB::table("data_list")
+                        ->where("mismass_invoice_id", "like", "%" . $id)
+                        ->value("template_id");
+                        
+        $data["template"] = DB::table("template_list")->where("id",$templateId)->get();
 
         return view('printout.invoice', $data);
     }

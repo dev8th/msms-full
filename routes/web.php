@@ -142,5 +142,5 @@ Route::controller(WebFormController::class)->group(function () {
     Route::get('/webform/input', 'input')->name('webform.input');
 });
 
-Route::get('/test', [TestController::class, 'index']);
+Route::get('/test', [TestController::class, 'getToken']);
 Route::post('/testing', [TestController::class, 'testing']);

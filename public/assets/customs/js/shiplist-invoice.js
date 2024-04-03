@@ -145,6 +145,7 @@ $("table").on("click","#editInvoiceBtn",function(){
                     bankAccountId=e['bank_account_id'];
                     fcValue = e['fc_value'];
                     fcSymbol = e['fc_symbol'];
+                    templateId = e['template_id'];
 
                     firstName = e['sender_first_name'],
                     middleName = e['sender_middle_name'],
@@ -424,6 +425,7 @@ $("table").on("click","#editInvoiceBtn",function(){
             }else{
                 onChangePembayaran($("#"+modalId+" select[name='pembayaran']").val("BANK"));
             }
+            $("#"+modalId+" select[name='templateId']").val(templateId);
             $("#"+modalId+" input[name='invoiceDoku']").val(dokuInvoiceId);
             $("#"+modalId+" input[name='linkDoku']").val(dokuLink);
             $("#"+modalId+" input[name='namaBank']").val(bankName);
@@ -710,6 +712,7 @@ $("#formBuatInvoice").validate({
             "required":"Tidak Boleh Kosong",
             "greaterThanZero":"Tidak Boleh Nol"
         },
+        "templateId": "Pilih Salah Satu",
     },
     submitHandler: function(form) {
 
@@ -905,6 +908,7 @@ $("#formEditInvoice").validate({
             "required":"Tidak Boleh Kosong",
             "greaterThanZero":"Tidak Boleh Nol"
         },
+        "templateId": "Pilih Salah Satu",
     },
     submitHandler: function(form) {
 
