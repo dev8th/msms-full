@@ -400,17 +400,6 @@ $forwarder = $forwarderId!="" ? ($forwarderId=="VENDOR" ? $forwarderName." | ".$
                             <td style="text-align:right"><?php echo $fc_symbol==""? App\Http\Controllers\Controller::rupiah($g->discount) : "S$ ".round($g->discount/$fc_value,2)?></td>
                         </tr>
                         @endif
-                       
-                        @if($g->pickup_weight>0)
-                        <tr style='border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;'>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td style='color:blue'>Pickup Weight {{$g->pickup_weight}} Kg</td>
-                            <td></td>
-                            <td style="text-align:right"><?php echo $fc_symbol==""? App\Http\Controllers\Controller::rupiah($g->pickup_charge) : "S$ ".round($g->pickup_charge/$fc_value,2)?></td>
-                        </tr>
-                        @endif
 
                         @if($g->packing>0)
                         <tr style='border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;'>

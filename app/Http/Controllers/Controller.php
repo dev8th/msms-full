@@ -1210,336 +1210,65 @@ class Controller extends BaseController
         return $desc;
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    public function sendWA($id,$status)
-    {
+    public function sendWA($data){
 
-        $get = DB::table("data_list")
-            ->join("order_list", "data_list.mismass_invoice_id", "=", "order_list.invoice_id")
-            ->join("cust_type_list", "order_list.cust_type_id", "=", "cust_type_list.id")
-            ->select(
-                "data_list.mismass_order_id",
-                "data_list.mismass_invoice_id",
-                "data_list.mismass_invoice_date",
-                "data_list.mismass_invoice_link",
-                "data_list.doku_link",
-                "data_list.doku_invoice_id",
-                "data_list.bank_name",
-                "data_list.bank_account_name",
-                "data_list.bank_account_id",
-                "data_list.invoice_status",
-                "data_list.forwarder_id",
-                "data_list.forwarder_name",
-                "data_list.shipping_number",
-                "data_list.updated_at",
-                "data_list.sender_first_name",
-                "data_list.sender_middle_name",
-                "data_list.sender_last_name",
-                "data_list.sender_phone",
-                "data_list.cons_first_name",
-                "data_list.cons_middle_name",
-                "data_list.cons_last_name",
-                "data_list.cons_phone",
-                "order_list.cust_type_id",
-                "cust_type_list.name as custTypeName"
-            )
-            ->where("mismass_invoice_id", "like", '%' . $id . "%")->first();
+        //$data=array
+        //0 = To Number
+        //1 = To Name
+        //2 = template ID
 
-//##################################################################################################
+        $curl = curl_init();
 
-        $notif="";
-        if($status=="EI"){
-            $notif = "
+        curl_setopt_array($curl, [
+        CURLOPT_URL => "https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => json_encode([
+            'to_number' => $data[0],
+            'to_name' => $data[1],
+            'message_template_id' => $data[2],
+            'channel_integration_id' => env("QONTAK_INTEGRATED_ID"),
+            'language' => [
+                'code' => 'id'
+            ],
+            'parameters' => [
+                'body' => [
+                        [
+                            'key' => '1',
+                            'value' => 'full_name',
+                            'value_text' => 'Burhanudin Hakim'
+                        ],
+                        [
+                            'key' => '1',
+                            'value' => 'full_name',
+                            'value_text' => 'Burhanudin Hakim'
+                        ],
+                        
+                ]
+            ]
+        ]),
 
-*INFORMATION*
-Your invoice has been *UPDATED* as per your request on ".date("d F Y")."
-Please kindly check.
+        CURLOPT_HTTPHEADER => [
+            "Authorization: Bearer {{access_token}}",
+            "Content-Type: application/json"
+        ],
 
-======================";   
-        }else if($status=="HI"){
-            $notif = "
-            
-*INFORMATION*
-Your parcel has been *CANCELLED* as per your request on ".date("d F Y")."
-            
-=======================";
-        }
+        ]);
 
-//##################################################################################################        
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
 
-        if($get->doku_link!=""){
-            $informasi_pembayaran = "Please click below payment link :
-" . $get->doku_link;
-            $orderNumber = $get->doku_invoice_id;
-        }else{
-            $informasi_pembayaran = "*Payment info :* 
-Bank : *" . $get->bank_name."*
-Account Number : *".$get->bank_account_id."*
-Account Name : *".$get->bank_account_name."*";
-            $orderNumber = "-";
-        }   
+        curl_close($curl);
 
-//##################################################################################################
-
-if($get->cust_type_id=="IND"){
-    $firstName = $get->cons_first_name;
-    $middleName = " ".$get->cons_middle_name ?? "";
-    $lastName = " ".$get->cons_last_name ?? "";
-    $phone = $get->cons_phone;
-}else if($get->cust_type_id=="COR"){
-    $firstName = $get->sender_first_name;
-    $middleName = " ".$get->sender_middle_name ?? "";
-    $lastName = " ".$get->sender_last_name ?? "";
-    $phone = $get->sender_phone;
-}
-
-//##################################################################################################
-
-        if ($get->invoice_status == "UNPAID") {
-            $header = "
-
-Halo *" . $firstName . $middleName . $lastName . "* Here is your invoice, please make payment at your earliest convenience before we deliver your parcel.
-
-". $informasi_pembayaran . "
-
-======================
-
-*Your Invoice Details :*
-Invoice Date : *" . date("d F Y",strtotime($get->mismass_invoice_date)) . "*
-Invoice No. : *" . $get->mismass_invoice_id . "*
-Order Number : *" . $orderNumber . "*
-Payment Status : *" . $get->invoice_status . "*
-Customer : *" . $get->custTypeName . "*
-
-Below link is your copy of invoice :
-print." .env('APP_URL'). "/p/" . $get->mismass_invoice_link;
+        if ($err) {
+        echo "cURL Error #:" . $err;
         } else {
-            $header = "
-
-Halo *" . $firstName . $middleName . $lastName . "* Thank you, we received your payment !
-
-Your parcel is on the way to you, please ensure someone is available to receive it.
-
-*Your Tracking Details :*
-Tracking Date : *" . date("d F Y",strtotime($get->updated_at)) . "*
-Tracking Number : *" . $get->shipping_number . "*
-Courier : *" . ($get->forwarder_id == "MISMASS" ? $get->forwarder_id : $get->forwarder_name) . "*
-No. Invoice : *".$get->mismass_invoice_id."*
-Payment Status : *".$get->invoice_status."*
-
-To track your parcel, please click below link.
-https://www.mismasslogistic.com/tracking
-
-======================
-
-Thanks for being with MISMASS ! Your experience is important to us, kindly share your opinion on how can we serve you better
-https://www.mismasslogistic.com/feedbackform";
+        echo $response;
         }
-
-//##################################################################################################
-
-$message = "*_Auto-Generated Message_*"
-. $notif 
-. $header . "
-
-Thank You
-*MISMASS LOGISTIC*
-www.mismasslogistic.com";
-
-//##################################################################################################
-
-        $dataSending = array();
-        $dataSending["api_key"] = env('WATZAP_API_KEY');
-        $dataSending["number_key"] = env('WATZAP_NUMBER_KEY');
-        $dataSending["phone_no"] = $phone;
-        $dataSending["message"] = $message;
-
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.watzap.id/v1/send_message',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => json_encode($dataSending),
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json'
-            ),
-        ));
-        $response = curl_exec($curl);
-        curl_close($curl);
-        return $response;
-    }
-
-    public function sendWAResiCOR($id,$sendTo,$mode){
-
-        //mode
-        //0 = create resi
-        //1 = edit resi
-
-        //send to
-        //0 => to sender
-        //1 => to consignee
-        $get = DB::table('data_list')
-                ->join('cust_type_list','cust_type_list.id','data_list.cust_type_id')
-                ->select(
-                    'sender_phone',
-                    'sender_first_name',
-                    'sender_middle_name',
-                    'sender_last_name',
-                    'sender_address',
-                    'sender_city',
-                    'sender_prov',
-                    'cons_phone',
-                    'cons_first_name',
-                    'cons_middle_name',
-                    'cons_last_name',
-                    'cons_address',
-                    'cons_city',
-                    'cons_prov',
-                    'updated_at',
-                    'shipping_number',
-                    'forwarder_id',
-                    'forwarder_name',
-                    'mismass_invoice_date',
-                    'mismass_invoice_id',
-                    'mismass_invoice_link',
-                    'invoice_status',
-                    'cust_type_list.name as custTypeName',
-                    'doku_link',
-                    'doku_invoice_id'
-                )
-                ->where('data_list.id',$id)
-                ->first();
-
-        $headDetail = $mode == 0 ? "Your parcel is on the way to you, please ensure someone is available to receive it." : "Tracking Detail has been *UPDATED* as per your request on ".date("d F Y")." Please kindly check.";
-        $orderNumber = $get->doku_link != "" ? $get->doku_invoice_id : "-";
-        $phone = $get->sender_phone;
-        $detilresi = "";
-        $mescor = " Thank you for your payment.";
-        $detilinvoice = "
-".$headDetail."
-
-*Your Invoice Details :*
-Invoice Date : *" . date("d F Y",strtotime($get->mismass_invoice_date)) . "*
-Invoice No. : *" . $get->mismass_invoice_id . "*
-Order Number : *" . $orderNumber . "*
-Payment Status : *" . $get->invoice_status . "*
-Customer : *" . $get->custTypeName . "*
-
-Below link is your copy of invoice :
-print." .env('APP_URL'). "/p/" . $get->mismass_invoice_link."
-
-======================
-
-Thanks for being with MISMASS ! Your experience is important to us, kindly share your opinion on how can we serve you better
-https://www.mismasslogistic.com/feedbackform
-
-";
-    $firstName = $get->sender_first_name;
-    $middleName = " ".$get->sender_middle_name ?? "";
-    $lastName = " ".$get->sender_last_name ?? "";
-
-if($sendTo==1){
-
-    $headDetail = $mode == 0 ? "" : "Tracking Detail has been *UPDATED* as per your request on ".date("d F Y")." Please kindly check.";
-
-    $detilresi="
-".$headDetail."
-    
-*Your Tracking details :*
-Tracking Date : *" . date("d F Y",strtotime($get->updated_at)) . "*
-Tracking Number : *" . $get->shipping_number . "*
-Courier : *" . ($get->forwarder_id == "MISMASS" ? $get->forwarder_id : $get->forwarder_name) . "*
-
-For tracking your parcel, please kindly check the link below.
-https://www.mismasslogistic.com/tracking";
-
-    $mescor = "";
-    $detilinvoice = "";
-    $phone = $get->cons_phone;
-
-    $firstName = $get->cons_first_name;
-    $middleName = " ".$get->cons_middle_name ?? "";
-    $lastName = " ".$get->cons_last_name ?? "";
-
-}
-
-    $name = $firstName.$middleName.$lastName;
-
-        $header = "
-
-Hallo *" . $name . "*".$mescor." ".$detilresi;
-
-        $message = "*_AUTO-GENERATED MESSAGE_*"
-
-. $header . "
-".$detilinvoice."
-Thank You
-*MISMASS LOGISTIC*
-www.mismasslogistic.com";
-
-        // $data['phone'] = $phone;
-        // $data['message'] = $message;
-        
-        // sendWAForm($data);
-
-        $dataSending = array();
-        $dataSending["api_key"] = env('WATZAP_API_KEY');
-        $dataSending["number_key"] = env('WATZAP_NUMBER_KEY');
-        $dataSending["phone_no"] = $phone;
-        $dataSending["message"] = $message;
-
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.watzap.id/v1/send_message',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => json_encode($dataSending),
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json'
-            ),
-        ));
-        $response = curl_exec($curl);
-        curl_close($curl);
-        return $response;
-
-    }
-
-    public function sendWAForm($data){
-
-        $dataSending = array();
-        $dataSending["api_key"] = env('WATZAP_API_KEY');
-        $dataSending["number_key"] = env('WATZAP_NUMBER_KEY');
-        $dataSending["phone_no"] = $data['phone'];
-        $dataSending["message"] = $data['message'];
-
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.watzap.id/v1/send_message',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => json_encode($dataSending),
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json'
-            ),
-        ));
-        $response = curl_exec($curl);
-        curl_close($curl);
-        return $response;
 
     }
 

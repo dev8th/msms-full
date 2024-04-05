@@ -195,12 +195,12 @@ Thank You.
 Send from website https://www.mismasslogistic.com",
         ];
 
-        $sendWA = $this->sendWAForm($data);
+        // $sendWA = $this->sendWAForm($data);
 
-        if(!$sendWA){
-            $encode = array("status" => "Gagal", "text" => "Gagal Kirim Notif Watzap");
-            return json_encode($encode);
-        }
+        // if(!$sendWA){
+        //     $encode = array("status" => "Gagal", "text" => "Gagal Kirim Notif Watzap");
+        //     return json_encode($encode);
+        // }
 
         $encode = array("status" => "Berhasil", "text" => $textSuccess);
         return json_encode($encode);
@@ -448,9 +448,9 @@ Send from website https://www.mismasslogistic.com",
 
         $updateInvoice = DB::table("order_list")->where("id", $request->input("mismassOrderId"))->update(["invoice_id" => $mismass_invoice]);
 
-        if ($updateInvoice) {
-            $this->sendWA($mismass_invoice_id,"BI");
-        }
+        // if ($updateInvoice) {
+            // $this->sendWA($mismass_invoice_id,"BI");
+        // }
 
         $dataHistory = [
             "codename" => "BI",
@@ -623,6 +623,8 @@ Send from website https://www.mismasslogistic.com",
                 $extra_cost_dest = $request->input("extraCostDest" . $i) ?? "";
                 $extra_cost_vendor_name = $request->input("extraCostVendorName" . $i) ?? "";
                 $extra_cost_shipping_number = $request->input("extraCostShippingNum" . $i) ?? "";
+                $pickup_weight = $this->normalizeInput($request->input("pickUpWeight" . $i));
+                $pickup_charge = $this->normalizeInput($request->input("pickUpCharge" . $i));
                 $sub_total = isset($request->input("subTotal")[$i]) ? $this->normalizeInput($request->input("subTotal")[$i]) : 0;
                 $fc_symbol = $request->input("foreignSymbol") ?? "";
                 $fc_value = $this->normalizeInput($request->input("foreignRateValue")) ?? 0;
@@ -700,6 +702,8 @@ Send from website https://www.mismasslogistic.com",
                 $go->extra_cost_dest != $extra_cost_dest ? $n++ : '';
                 $go->extra_cost_vendor_name != $extra_cost_vendor_name ? $n++ : '';
                 $go->extra_cost_shipping_number != $extra_cost_shipping_number ? $n++ : '';
+                $go->pickup_weight != $pickup_weight ? $n++ : '';
+                $go->pickup_charge != $pickup_charge ? $n++ : '';
                 $go->sub_total != $sub_total ? $n++ : '';
                 $go->fc_symbol != $fc_symbol ? $n++ : '';
                 $go->fc_value != $fc_value ? $n++ : '';
@@ -818,6 +822,8 @@ Send from website https://www.mismasslogistic.com",
                             "extra_cost_dest" => $request->input("extraCostDest" . $i) ?? "",
                             "extra_cost_vendor_name" => $request->input("extraCostVendorName" . $i) ?? "",
                             "extra_cost_shipping_number" => $request->input("extraCostShippingNum" . $i) ?? "",
+                            "pickup_weight" => $this->normalizeInput($request->input("pickUpWeight" . $i)),
+                            "pickup_charge" => $this->normalizeInput($request->input("pickUpCharge" . $i)),
                             "sub_total" => isset($request->input("subTotal")[$i]) ? $this->normalizeInput($request->input("subTotal")[$i]) : 0,
                             "fc_symbol" => $request->input("foreignSymbol") ?? "",
                             "fc_value" => $this->normalizeInput($request->input("foreignRateValue")) ?? 0);
@@ -829,7 +835,7 @@ Send from website https://www.mismasslogistic.com",
             }
         }
 
-        $this->sendWA($request->input('mismassInvoiceId'),"EI");
+        // $this->sendWA($request->input('mismassInvoiceId'),"EI");
 
         $encode = array("status" => "Gagal", "text" => "Gagal Buat Invoice", "url" => "");
         if ($success == count($request->input("warehouse"))) {
@@ -1021,7 +1027,7 @@ Send from website https://www.mismasslogistic.com",
     public function hapusInvoice(Request $request){
         $mismassInvoiceId = $request->input("id");
 
-        $this->sendWa($mismassInvoiceId,"HI");
+        // $this->sendWa($mismassInvoiceId,"HI");
 
         $dataHistory = [
             "codename" => "BI",
@@ -1112,7 +1118,7 @@ Send from website https://www.mismasslogistic.com",
 
             $encode = array("status" => "Gagal", "text" => "Gagal Buat Resi");
             if ($update) {
-                $this->sendWA($request->input("mismassInvoiceId"),"BR");
+                // $this->sendWA($request->input("mismassInvoiceId"),"BR");
                 $encode = array("status" => "Berhasil", "text" => "Berhasil Buat Resi Dan Telah Dikirim Ke Whatsapp Customer. Silahkan Cek Pada Tabel Status.", "url" => url('/printout/resi/' . $this->resiNoGaring($this->resiOnlyId($shipping_number, $request->input("tipeForwarder")[0]).'=')));
             }
 
@@ -1148,9 +1154,9 @@ Send from website https://www.mismasslogistic.com",
                             "invoice_status" => "PAID"
                         ]);
                 if($saklar){
-                    $this->sendWAResiCOR($request->input('id')[$i],0,0);
+                    // $this->sendWAResiCOR($request->input('id')[$i],0,0);
                 }
-                $this->sendWAResiCOR($request->input('id')[$i],1,0);
+                // $this->sendWAResiCOR($request->input('id')[$i],1,0);
                 $saklar = false;
             }
             $encode = array("status" => "Berhasil", "text" => "Berhasil Buat Resi Dan Telah Dikirim Ke Whatsapp Customer. Silahkan Cek Pada Tabel Status.", "url" => url($urlResi));
@@ -1255,10 +1261,10 @@ Send from website https://www.mismasslogistic.com",
                             ]);
 
                     if($saklar){
-                        $this->sendWAResiCOR($request->input('id')[$i],0,1);
+                        // $this->sendWAResiCOR($request->input('id')[$i],0,1);
                     }
 
-                    $this->sendWAResiCOR($request->input('id')[$i],1,1);
+                    // $this->sendWAResiCOR($request->input('id')[$i],1,1);
                     
                     $saklar = false;
 
