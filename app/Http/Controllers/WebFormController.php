@@ -125,19 +125,19 @@ class WebFormController extends Controller
             "phone" => $phone,
         ];
 
-        $data = [
-            "phone" => $phone,
-            "message" => "Halo *".$fullName."* We have received your registration with below details : 
+//         $data = [
+//             "phone" => $phone,
+//             "message" => "Halo *".$fullName."* We have received your registration with below details : 
 
-Full Name : *".$fullName."*
-Whatsapp No : *".$phone."*
-Email : *".$email."*
-Full Address : *".$fullAddress."*
+// Full Name : *".$fullName."*
+// Whatsapp No : *".$phone."*
+// Email : *".$email."*
+// Full Address : *".$fullAddress."*
             
-Kindly wait for further confirmations. Thank You.
+// Kindly wait for further confirmations. Thank You.
 
-Send from website https://www.mismasslogistic.com",
-        ];
+// Send from website https://www.mismasslogistic.com",
+//         ];
 
         $sendingMail = Mail::to($email)
                         ->cc($ccEmail)
@@ -149,7 +149,14 @@ Send from website https://www.mismasslogistic.com",
         //     return json_encode($encode);
         // }
 
-        $sendWA = $this->sendWAForm($data);
+        // $sendWA = $this->sendWAForm($data);
+        $data = [
+            $phone,
+            $fullName,
+            $email,
+            $fullAddress
+        ];
+        $this->initializeCreateOrder($data);
 
         // if(!$sendWA){
         //     $encode = array("status" => "Something Wrong", "text" => "Fail to send wa");
