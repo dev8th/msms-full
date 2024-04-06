@@ -66,7 +66,7 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::post('/shiplist/buat/invoice', 'buatInvoice')->name('shiplist.buatinvoice');
         Route::get('/shiplist/table/invoice/{custTypeId}', 'tableInvoice')->name('shiplist.tableinvoice');
-        Route::get('/shiplist/edit/invoice', 'editInvoice')->name('shiplist.editinvoice');
+        Route::post('/shiplist/edit/invoice', 'editInvoice')->name('shiplist.editinvoice');
         Route::get('/shiplist/edit/detilcons', 'editDetilCons')->name('shiplist.editdetilcons');
         Route::get('/shiplist/edit/invoice/getdata', 'editInvoiceGetData')->name('shiplist.editinvoicegetdata');
         Route::post('/shiplist/hapus/invoice', 'hapusInvoice')->name('shiplist.hapusinvoice');
@@ -142,5 +142,5 @@ Route::controller(WebFormController::class)->group(function () {
     Route::get('/webform/input', 'input')->name('webform.input');
 });
 
-Route::get('/test', [TestController::class, 'getToken']);
+Route::get('/test', [TestController::class, 'test']);
 Route::post('/testing', [TestController::class, 'testing']);

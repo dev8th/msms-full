@@ -913,7 +913,7 @@ $("#formEditInvoice").validate({
     submitHandler: function(form) {
 
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: location.origin+"/shiplist/edit/invoice",
             data: $(form).serialize(),
             beforeSend: function() {

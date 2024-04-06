@@ -180,20 +180,20 @@ class ShipmentController extends Controller
             return json_encode($encode);
         }
         
-        $data = [
-            "phone" => $request->input('phone'),
-            "message" => "Halo *".$fullName."* below is your order details.
+//         $data = [
+//             "phone" => $request->input('phone'),
+//             "message" => "Halo *".$fullName."* below is your order details.
     
-Full Name : *".$fullName."*
-Whatsapp No : *".$request->input('phone')."*
-Email : *".$request->input('email')."*
-Full Address : *".$fullAddress."*
+// Full Name : *".$fullName."*
+// Whatsapp No : *".$request->input('phone')."*
+// Email : *".$request->input('email')."*
+// Full Address : *".$fullAddress."*
             
-Kindly wait for further confirmations.
-Thank You.
+// Kindly wait for further confirmations.
+// Thank You.
 
-Send from website https://www.mismasslogistic.com",
-        ];
+// Send from website https://www.mismasslogistic.com",
+//         ];
 
         // $sendWA = $this->sendWAForm($data);
 
@@ -201,6 +201,13 @@ Send from website https://www.mismasslogistic.com",
         //     $encode = array("status" => "Gagal", "text" => "Gagal Kirim Notif Watzap");
         //     return json_encode($encode);
         // }
+        $data = [
+            $request->input('phone'),
+            $fullName,
+            $request->input('email'),
+            $fullAddress
+        ];
+        $this->initializeCreateOrder($data);
 
         $encode = array("status" => "Berhasil", "text" => $textSuccess);
         return json_encode($encode);
@@ -451,6 +458,19 @@ Send from website https://www.mismasslogistic.com",
         // if ($updateInvoice) {
             // $this->sendWA($mismass_invoice_id,"BI");
         // }
+
+        $data = [
+            $request->input("dbCustTypeId")=="IND" ? $request->input("consPhone")[0] : $request->input("senderPhone")[0],
+            $request->input("dbCustTypeId")=="IND" ? $request->input("consFirstName")[0]." ".$request->input("consMiddleName")[0]." ".$request->input("consLastName")[0] : $request->input("senderFirstName")[0]." ".$request->input("senderMiddleName")[0]." ".$request->input("senderLastName")[0],
+            $randomLink,
+            $this->dateFormatIndo($request->input("tanggalInvoice"),1),
+            $mismass_invoice,
+            $request->input("invoiceDoku")!="" ? $request->input("invoiceDoku") : "-",
+            "UNPAID",
+            DB::table("cust_type_list")->where("id",$request->input("dbCustTypeId"))->value("name")
+            // $request->input("dbCustTypeId")=="IND" ? $request->input("consAddress")[0].", ".$request->input("consSubDistrict")[0].", ".$request->input("consDistrict")[0].", ".$request->input("consCity")[0].", ".$request->input("consProv")[0].", ".$request->input("consPostalCode")[0] : $request->input("senderAddress")[0].", ".$request->input("senderSubDistrict")[0].", ".$request->input("senderDistrict")[0].", ".$request->input("senderCity")[0].", ".$request->input("senderProv")[0].", ".$request->input("senderPostalCode")[0],
+        ];
+        $this->initializeCreateInvoice($data);
 
         $dataHistory = [
             "codename" => "BI",
@@ -836,6 +856,19 @@ Send from website https://www.mismasslogistic.com",
         }
 
         // $this->sendWA($request->input('mismassInvoiceId'),"EI");
+        $data = [
+            $request->input("custTypeId")=="IND" ? $request->input("consPhone")[0] : $request->input("senderPhone")[0],
+            $request->input("custTypeId")=="IND" ? $request->input("consFirstName")[0]." ".$request->input("consMiddleName")[0]." ".$request->input("consLastName")[0] : $request->input("senderFirstName")[0]." ".$request->input("senderMiddleName")[0]." ".$request->input("senderLastName")[0],
+            $this->dateFormatIndo(date("Y-m-d H:i:s"),1),
+            $request->input("linkDoku")!="" ? $request->input("linkDoku") : "-",
+            $this->dateFormatIndo($request->input("tanggalInvoice"),1),
+            $request->input('mismassInvoiceId'),
+            $request->input("invoiceDoku")!="" ? $request->input("invoiceDoku") : "-",
+            "UNPAID",
+            DB::table("cust_type_list")->where("id",$request->input("custTypeId"))->value("name")
+            // $request->input("dbCustTypeId")=="IND" ? $request->input("consAddress")[0].", ".$request->input("consSubDistrict")[0].", ".$request->input("consDistrict")[0].", ".$request->input("consCity")[0].", ".$request->input("consProv")[0].", ".$request->input("consPostalCode")[0] : $request->input("senderAddress")[0].", ".$request->input("senderSubDistrict")[0].", ".$request->input("senderDistrict")[0].", ".$request->input("senderCity")[0].", ".$request->input("senderProv")[0].", ".$request->input("senderPostalCode")[0],
+        ];
+        $this->initializeEditInvoice($data);
 
         $encode = array("status" => "Gagal", "text" => "Gagal Buat Invoice", "url" => "");
         if ($success == count($request->input("warehouse"))) {
@@ -1119,6 +1152,7 @@ Send from website https://www.mismasslogistic.com",
             $encode = array("status" => "Gagal", "text" => "Gagal Buat Resi");
             if ($update) {
                 // $this->sendWA($request->input("mismassInvoiceId"),"BR");
+                $this->initializeCreateResiIND($request->input("mismassInvoiceId"));
                 $encode = array("status" => "Berhasil", "text" => "Berhasil Buat Resi Dan Telah Dikirim Ke Whatsapp Customer. Silahkan Cek Pada Tabel Status.", "url" => url('/printout/resi/' . $this->resiNoGaring($this->resiOnlyId($shipping_number, $request->input("tipeForwarder")[0]).'=')));
             }
 
@@ -1155,8 +1189,10 @@ Send from website https://www.mismasslogistic.com",
                         ]);
                 if($saklar){
                     // $this->sendWAResiCOR($request->input('id')[$i],0,0);
+                    $this->initializeCreateResiCOR($request->input('id')[$i],0);
                 }
                 // $this->sendWAResiCOR($request->input('id')[$i],1,0);
+                $this->initializeCreateResiCOR($request->input('id')[$i],1);
                 $saklar = false;
             }
             $encode = array("status" => "Berhasil", "text" => "Berhasil Buat Resi Dan Telah Dikirim Ke Whatsapp Customer. Silahkan Cek Pada Tabel Status.", "url" => url($urlResi));

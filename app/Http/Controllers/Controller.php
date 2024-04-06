@@ -1210,12 +1210,237 @@ class Controller extends BaseController
         return $desc;
     }
 
-    public function sendWA($data){
+    public function initializeCreateOrder($a){
+        
 
-        //$data=array
-        //0 = To Number
-        //1 = To Name
-        //2 = template ID
+        $data[0] = "+62".$a[0];
+        $data[1] = $a[1];
+        $data[2] = env("QONTAK_TEMPLATE_ID_CREATE_ORDER");
+        $data[3] = ['code' => 'en'];
+        $data[4] = [
+            [
+                'key' => '1',
+                'value' => 'full_name',
+                'value_text' => $a[1]
+            ],
+            [
+                'key' => '2',
+                'value' => 'no_wa',
+                'value_text' => $a[0]
+            ],
+            [
+                'key' => '3',
+                'value' => 'email',
+                'value_text' => $a[2]
+            ],
+            [
+                'key' => '4',
+                'value' => 'address',
+                'value_text' => $a[3]
+            ]
+        ];
+        $this->sendWA($data);
+    }
+
+    public function initializeCreateInvoice($a){
+        $data[0] = "+62".$a[0];
+        $data[1] = $a[1];
+        $data[2] = env("QONTAK_TEMPLATE_ID_CREATE_INVOICE");
+        $data[3] = ['code' => 'en'];
+        $data[4] = [
+            [
+                'key' => '1',
+                'value' => 'full_name',
+                'value_text' => $a[1]
+            ],
+            [
+                'key' => '2',
+                'value' => 'link',
+                'value_text' => $a[2]
+            ],
+            [
+                'key' => '3',
+                'value' => 'invoice_date',
+                'value_text' => $a[3]
+            ],
+            [
+                'key' => '4',
+                'value' => 'invoice_id',
+                'value_text' => $a[4]
+            ],
+            [
+                'key' => '5',
+                'value' => 'doku_invoice_id',
+                'value_text' => $a[5]
+            ],
+            [
+                'key' => '6',
+                'value' => 'payment_status',
+                'value_text' => $a[6]
+            ],
+            [
+                'key' => '7',
+                'value' => 'cust_type',
+                'value_text' => $a[7]
+            ]
+        ];
+        $this->sendWA($data);
+    }
+
+    public function initializeEditInvoice($a){
+        $data[0] = "+62".$a[0];
+        $data[1] = $a[1];
+        $data[2] = env("QONTAK_TEMPLATE_ID_EDIT_INVOICE");
+        $data[3] = ['code' => 'en'];
+        $data[4] = [
+            [
+                'key' => '1',
+                'value' => 'full_name',
+                'value_text' => $a[1]
+            ],
+            [
+                'key' => '2',
+                'value' => 'update_at',
+                'value_text' => $a[2]
+            ],
+            [
+                'key' => '3',
+                'value' => 'doku_link',
+                'value_text' => $a[3]
+            ],
+            [
+                'key' => '4',
+                'value' => 'invoice_date',
+                'value_text' => $a[4]
+            ],
+            [
+                'key' => '5',
+                'value' => 'invoice_id',
+                'value_text' => $a[5]
+            ],
+            [
+                'key' => '6',
+                'value' => 'doku_invoice_id',
+                'value_text' => $a[6]
+            ],
+            [
+                'key' => '7',
+                'value' => 'payment_status',
+                'value_text' => $a[7]
+            ],
+            [
+                'key' => '8',
+                'value' => 'cust_type',
+                'value_text' => $a[8]
+            ]
+        ];
+        $this->sendWA($data);
+    }
+
+    public function initializeCreateResiIND($a){
+        $get = DB::table("data_list")->select("cons_phone","cons_first_name","cons_middle_name","cons_last_name","shipping_created_at","shipping_number","forwarder_id","forwarder_name","mismass_invoice_id","invoice_status")->where("mismass_invoice_id",$a)->first(); 
+
+        $data[0] = "+62".$get->cons_phone;
+        $data[1] = $get->cons_first_name." ".$get->cons_middle_name." ".$get->cons_last_name;
+        $data[2] = env("QONTAK_TEMPLATE_ID_CREATE_RESI");
+        $data[3] = ['code' => 'en'];
+        $data[4] = [
+            [
+                'key' => '1',
+                'value' => 'full_name',
+                'value_text' => $data[1]
+            ],
+            [
+                'key' => '2',
+                'value' => 'ship_created_at',
+                'value_text' => $this->dateFormatIndo($get->shipping_created_at,1)
+            ],
+            [
+                'key' => '3',
+                'value' => 'shipping_number',
+                'value_text' => $get->shipping_number
+            ],
+            [
+                'key' => '4',
+                'value' => 'forwarder',
+                'value_text' => $get->forwarder_id!="VENDOR"?$get->forwarder_id:$get->forwarder_name
+            ],
+            [
+                'key' => '5',
+                'value' => 'm_invoice_id',
+                'value_text' => $get->mismass_invoice_id
+            ],
+            [
+                'key' => '6',
+                'value' => 'invoice_status',
+                'value_text' => $get->invoice_status
+            ]
+        ];
+        $this->sendWA($data);
+    }
+
+    public function initializeCreateResiCOR($a,$m){
+
+        $get = DB::table("data_list")->select("cons_phone","cons_first_name","cons_middle_name","cons_last_name","sender_phone","sender_first_name","sender_middle_name","sender_last_name","shipping_created_at","shipping_number","forwarder_id","forwarder_name","mismass_invoice_id","invoice_status")->where("id",$a)->first(); 
+
+        // dd($get->sender_phone);
+
+        //Only INV
+        if($m==0){
+            $data[0] = "+62".$get->sender_phone;
+            $data[1] = $get->sender_first_name." ".$get->sender_middle_name." ".$get->sender_last_name;
+            $data[2] = env("QONTAK_TEMPLATE_ID_CREATE_RESI_ONLY_INV");
+            $data[3] = ['code' => 'en'];
+            $data[4] = [
+                [
+                    'key' => '1',
+                    'value' => 'full_name',
+                    'value_text' => $data[1]
+                ],
+                [
+                    'key' => '2',
+                    'value' => 'm_invoice_id',
+                    'value_text' => $get->mismass_invoice_id
+                ],
+                [
+                    'key' => '3',
+                    'value' => 'invoice_status',
+                    'value_text' => $get->invoice_status
+                ]
+            ];
+        }else{
+            $data[0] = "+62".$get->cons_phone;
+            $data[1] = $get->cons_first_name." ".$get->cons_middle_name." ".$get->cons_last_name;
+            $data[2] = env("QONTAK_TEMPLATE_ID_CREATE_RESI_ONLY_TRACKING");
+            $data[3] = ['code' => 'en'];
+            $data[4] = [
+                [
+                    'key' => '1',
+                    'value' => 'full_name',
+                    'value_text' => $data[1]
+                ],
+                [
+                    'key' => '2',
+                    'value' => 'ship_created_at',
+                    'value_text' => $this->dateFormatIndo($get->shipping_created_at,1)
+                ],
+                [
+                    'key' => '3',
+                    'value' => 'shipping_number',
+                    'value_text' => $get->shipping_number
+                ],
+                [
+                    'key' => '4',
+                    'value' => 'forwarder',
+                    'value_text' => $get->forwarder_id!="VENDOR"?$get->forwarder_id:$get->forwarder_name
+                ]
+            ];
+        }
+        
+        $this->sendWA($data);
+    }
+
+    public function sendWA($data){
 
         $curl = curl_init();
 
@@ -1232,28 +1457,14 @@ class Controller extends BaseController
             'to_name' => $data[1],
             'message_template_id' => $data[2],
             'channel_integration_id' => env("QONTAK_INTEGRATED_ID"),
-            'language' => [
-                'code' => 'id'
-            ],
+            'language' => $data[3],
             'parameters' => [
-                'body' => [
-                        [
-                            'key' => '1',
-                            'value' => 'full_name',
-                            'value_text' => 'Burhanudin Hakim'
-                        ],
-                        [
-                            'key' => '1',
-                            'value' => 'full_name',
-                            'value_text' => 'Burhanudin Hakim'
-                        ],
-                        
-                ]
+                'body' => $data[4]
             ]
         ]),
 
         CURLOPT_HTTPHEADER => [
-            "Authorization: Bearer {{access_token}}",
+            "Authorization: ".env("QONTAK_TOKEN"),
             "Content-Type: application/json"
         ],
 
@@ -1264,11 +1475,11 @@ class Controller extends BaseController
 
         curl_close($curl);
 
-        if ($err) {
-        echo "cURL Error #:" . $err;
-        } else {
-        echo $response;
-        }
+        // if ($err) {
+        // dd("cURL Error #:" . $err);
+        // } else {
+        // dd($response);
+        // }
 
     }
 
