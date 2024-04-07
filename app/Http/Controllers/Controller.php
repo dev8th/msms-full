@@ -69,6 +69,17 @@ class Controller extends BaseController
         return true;
     }
 
+    public static function checkPrefix($a){
+        if(strpos($a,"+62")===0){
+            $fix=$a;
+        }else if(strpos($a,"62")===0){
+            $fix="+".$a;
+        }else{
+            $fix="+62".$a;
+        }
+        return $fix;
+    }
+
     public static function ifEmpty($a)
     {
         return $a == "" ? $a = "-" : $a;
@@ -1211,9 +1222,8 @@ class Controller extends BaseController
     }
 
     public function initializeCreateOrder($a){
-        
 
-        $data[0] = "+62".$a[0];
+        $data[0] = $this->checkPrefix($a[0]);
         $data[1] = $a[1];
         $data[2] = env("QONTAK_TEMPLATE_ID_CREATE_ORDER");
         $data[3] = ['code' => 'en'];
@@ -1243,7 +1253,7 @@ class Controller extends BaseController
     }
 
     public function initializeCreateInvoice($a){
-        $data[0] = "+62".$a[0];
+        $data[0] = $this->checkPrefix($a[0]);
         $data[1] = $a[1];
         $data[2] = env("QONTAK_TEMPLATE_ID_CREATE_INVOICE");
         $data[3] = ['code' => 'en'];
@@ -1288,7 +1298,7 @@ class Controller extends BaseController
     }
 
     public function initializeEditInvoice($a){
-        $data[0] = "+62".$a[0];
+        $data[0] = $this->checkPrefix($a[0]);
         $data[1] = $a[1];
         $data[2] = env("QONTAK_TEMPLATE_ID_EDIT_INVOICE");
         $data[3] = ['code' => 'en'];
@@ -1340,7 +1350,7 @@ class Controller extends BaseController
     public function initializeCreateResiIND($a){
         $get = DB::table("data_list")->select("cons_phone","cons_first_name","cons_middle_name","cons_last_name","shipping_created_at","shipping_number","forwarder_id","forwarder_name","mismass_invoice_id","invoice_status")->where("mismass_invoice_id",$a)->first(); 
 
-        $data[0] = "+62".$get->cons_phone;
+        $data[0] = $this->checkPrefix($get->cons_phone);
         $data[1] = $get->cons_first_name." ".$get->cons_middle_name." ".$get->cons_last_name;
         $data[2] = env("QONTAK_TEMPLATE_ID_CREATE_RESI");
         $data[3] = ['code' => 'en'];
@@ -1387,7 +1397,7 @@ class Controller extends BaseController
 
         //Only INV
         if($m==0){
-            $data[0] = "+62".$get->sender_phone;
+            $data[0] = $this->checkPrefix($get->sender_phone);
             $data[1] = $get->sender_first_name." ".$get->sender_middle_name." ".$get->sender_last_name;
             $data[2] = env("QONTAK_TEMPLATE_ID_CREATE_RESI_ONLY_INV");
             $data[3] = ['code' => 'en'];
@@ -1409,7 +1419,7 @@ class Controller extends BaseController
                 ]
             ];
         }else{
-            $data[0] = "+62".$get->cons_phone;
+            $data[0] = $this->checkPrefix($get->cons_phone);
             $data[1] = $get->cons_first_name." ".$get->cons_middle_name." ".$get->cons_last_name;
             $data[2] = env("QONTAK_TEMPLATE_ID_CREATE_RESI_ONLY_TRACKING");
             $data[3] = ['code' => 'en'];
