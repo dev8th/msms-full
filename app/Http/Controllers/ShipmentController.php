@@ -1421,7 +1421,7 @@ class ShipmentController extends Controller
         $invoiceModel = new Invoice;
         $data["full"] = $invoiceModel::select(
             "data_list.*",
-            "service_list.name as servname",
+            "service_list.name as servName",
             "cust_type_list.name as custTypeName",
             "warehouse_list.name as wareName",
             "warehouse_list.location as wareLoc",
@@ -1430,7 +1430,7 @@ class ShipmentController extends Controller
             ->join("warehouse_list", "warehouse_list.id", "=", "data_list.warehouse_id")
             ->join("cust_type_list", "cust_type_list.id", "=", "data_list.cust_type_id")
             ->join("service_list", "service_list.id", "=", "data_list.service_id")
-            ->where("mismass_invoice_link", "=", $id)
+            ->where("mismass_invoice_id", "like", "%" . $id)
             ->get();
             
         if(count($data['full'])<1){
@@ -1468,55 +1468,6 @@ class ShipmentController extends Controller
 
         return view('printout.invoice', $data);
     }
-    
-    public function printOutInvoiceEditable(string $id)
-    {
-        $this->roleAccess();
-        abort_if(!Auth::user()->shiplist_printout_invoice, 403);
-        $invoiceModel = new Invoice;
-        $data["full"] = $invoiceModel::select(
-            "data_list.*",
-            "cust_type_list.name as custTypeName",
-            "warehouse_list.name as wareName",
-            "warehouse_list.location as wareLoc",
-
-        )
-            ->join("warehouse_list", "warehouse_list.id", "=", "data_list.warehouse_id")
-            ->join("cust_type_list", "cust_type_list.id", "=", "data_list.cust_type_id")
-            ->where("mismass_invoice_id", "like", "%" . $id)
-            ->get();
-            
-        if(count($data['full'])<1){
-            abort(404);
-        }
-
-        $data["sum"] = $invoiceModel::selectRaw("
-        SUM(weight) as totalWeight,
-        SUM(item) as totalItem,
-        SUM(cbm) as totalCbm,
-        SUM(sub_total) as totalPrice")
-            ->where("mismass_invoice_id", "like", "%" . $id)
-            ->get();
-
-        $data["subTotalWeight"] = $invoiceModel::selectRaw("SUM(sub_total) as subTotalW")
-            ->where("mismass_invoice_id", "like", "%" . $id)
-            ->where("weight", ">", 0)
-            ->get();
-
-        $data["subTotalItem"] = $invoiceModel::selectRaw("SUM(sub_total) as subTotalI")
-            ->where("mismass_invoice_id", "like", "%" . $id)
-            ->where("item", ">", 0)
-            ->get();
-
-        $data["subTotalCbm"] = $invoiceModel::selectRaw("SUM(sub_total) as subTotalC")
-            ->where("mismass_invoice_id", "like", "%" . $id)
-            ->where("cbm", ">", 0)
-            ->get();
-        
-        $data["template"] = DB::table("template_list")->where("status_id","1")->get();
-
-        return view('printout.invoice-editable', $data);
-    }
 
     public function printOutResi(string $id)
     {   
@@ -1548,7 +1499,7 @@ class ShipmentController extends Controller
         $invoiceModel = new Invoice;
         $data["full"] = $invoiceModel::select(
             "data_list.*",
-            "service_list.name as servname",
+            "service_list.name as servName",
             "cust_type_list.name as custTypeName",
             "warehouse_list.name as wareName",
             "warehouse_list.location as wareLoc",

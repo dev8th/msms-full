@@ -78,7 +78,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/check/getdatalist', 'getDataList')->name('shiplist.getdatalist');
         
         Route::get('/printout/invoice/{id}', 'printOutInvoice')->name('shiplist.printoutinvoice');
-        Route::get('/printout/invoice/editable/{id}', 'printOutInvoiceEditable')->name('shiplist.printoutinvoiceeditable');
         Route::get('/printout/resi/{id}', 'printOutResi')->name('shiplist.printoutresi');
         Route::post('/check/lastshippingid', 'lastShippingId')->name('shiplist.lastshippingid');
         Route::get('/foreignrate', 'foreignRate')->name('shiplist.foreignrate');
