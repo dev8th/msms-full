@@ -1421,6 +1421,7 @@ class ShipmentController extends Controller
         $invoiceModel = new Invoice;
         $data["full"] = $invoiceModel::select(
             "data_list.*",
+            "service_list.name as servname",
             "cust_type_list.name as custTypeName",
             "warehouse_list.name as wareName",
             "warehouse_list.location as wareLoc",
@@ -1428,7 +1429,8 @@ class ShipmentController extends Controller
         )
             ->join("warehouse_list", "warehouse_list.id", "=", "data_list.warehouse_id")
             ->join("cust_type_list", "cust_type_list.id", "=", "data_list.cust_type_id")
-            ->where("mismass_invoice_id", "like", "%" . $id)
+            ->join("service_list", "service_list.id", "=", "data_list.service_id")
+            ->where("mismass_invoice_link", "=", $id)
             ->get();
             
         if(count($data['full'])<1){
@@ -1546,6 +1548,7 @@ class ShipmentController extends Controller
         $invoiceModel = new Invoice;
         $data["full"] = $invoiceModel::select(
             "data_list.*",
+            "service_list.name as servname",
             "cust_type_list.name as custTypeName",
             "warehouse_list.name as wareName",
             "warehouse_list.location as wareLoc",
@@ -1553,6 +1556,7 @@ class ShipmentController extends Controller
         )
             ->join("warehouse_list", "warehouse_list.id", "=", "data_list.warehouse_id")
             ->join("cust_type_list", "cust_type_list.id", "=", "data_list.cust_type_id")
+            ->join("service_list", "service_list.id", "=", "data_list.service_id")
             ->where("mismass_invoice_link", "=", $id)
             ->get();
             

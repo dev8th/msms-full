@@ -382,7 +382,7 @@ $forwarder = $forwarderId!="" ? ($forwarderId=="VENDOR" ? $forwarderName." | ".$
                                 <div>{{$g->wareLoc}}</div>
                             </td>
                             <td style="text-align: left;vertical-align:top">
-                                <div class="bold-text">{{$g->service_name}}</div>
+                                <div class="bold-text">{{$g->servname}}</div>
                                 <div>{{$actualWeight}}</div>
                             </td>
                             <td style="text-align: left;vertical-align:top"><?php echo $fc_symbol==""? App\Http\Controllers\Controller::rupiah($g->service_price_per) : "S$ ".round($g->service_price_per/$fc_value,2)?></td>
